@@ -1,7 +1,42 @@
+import { useNavigate } from 'react-router-dom';
+import icon from '../assets/icons/head_icon.png'
+import { useState } from 'react';
+
 function Login(){
+    const [loading,setLoading] = useState(false);
+    const navigate = useNavigate();
+
+    function handleCreateAccount(){
+        setLoading(true)
+        setTimeout(() => navigate("/register"), 2000)
+    }
+
     return(
-        <section>
-            <h1>login page</h1>
+        <section className="flex flex-col justify-center items-center w-[100vw] h-[100vh] bg-slate-100">
+            { 
+                loading &&
+                <div className='relative w-[1020px] max-w-[1020px]'>
+                    <span className='absolute top-0 left-0 w-[100%] h-[4px] bg-gradient-to-r from-blue-500 via-green-400 to-red-500 transition-all duration-1000'></span>
+                </div>
+            }
+            <article className='flex flex-row justify-center items-start w-[1024px] h-[380px] max-w-[1024px] max-h-[380px] overflow-hidden bg-white p-6 rounded-2xl'>
+                <div className='flex flex-col gap-2 justify-start items-start w-[50%] border-red-900 p-4'>
+                    <img src={icon} alt='youtube_icon' className='h-[50px]'/>
+                    <h1 className='text-[40px] font-medium'>Sign in</h1>
+                    <span className='text-[16px] font-light'>to continue to YouYube - clone</span>
+                </div>
+                <div className='flex flex-col gap-9 justify-center items-start w-[50%] h-[100%] p-4'>
+                    <div className='relative w-[100%]'>
+                        <input type='text' placeholder='' id='name' className='peer outline-1 rounded p-3 w-[100%] focus:outline-2 focus:outline-blue-700'></input>
+                        <label for="name" class="absolute left-4 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-600 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-700 peer-focus:bg-white peer-focus:px-1">Username or email</label>
+                    </div>
+                    <p className='text-[14px]'>Not your computer? Use a Private Window to sign in.</p>
+                    <div className='flex flex-row gap-6 justify-end items-center w-[100%]'>
+                        <button className='text-blue-700 text-[14px] cursor-pointer border-white bg-white hover:bg-gray-200 rounded-3xl h-[40px] px-3' onClick={handleCreateAccount}>Create account</button>
+                        <button className='bg-blue-700 text-white w-[78px] h-[40px] border-blue-700 rounded-3xl cursor-pointer hover:bg-blue-900 px-3'>Next</button>
+                    </div>
+                </div>
+            </article>
         </section>
     )
 }

@@ -1,9 +1,25 @@
+import { useNavigate } from 'react-router-dom';
 import icon from '../assets/icons/head_icon.png'
 import serachicon from '../assets/icons/searchicon.png';
+import { useState } from 'react';
 
 function Header({toggleSideBar}){
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
+    function handleSignIn(){
+        setLoading(true);
+        setTimeout(() => navigate("/login"),2000)
+    }
 
     return(
+        <>
+        {
+            loading && 
+            <div className='relative z-20'>
+                <span className='absolute top-0 left-0 w-[100%] h-[4px] bg-gradient-to-r from-blue-500 via-green-400 to-red-500 transition-all duration-500'></span>
+            </div>
+        }
         <header className="flex flex-row gap-2  h-[58px] items-stretch justify-between px-[20px] sticky top-0 pt-3 pb-1 z-10 bg-white">
             <div className="flex flex-row gap-3 h-[100%] items-center relative px-2 ">
                 <nav className="flex flex-row h-[80%] items-center relative p-1.5">
@@ -29,9 +45,10 @@ function Header({toggleSideBar}){
                     <span className="w-[3px] h-[3px] bg-black rounded-full"></span>
                     <span className="w-[3px] h-[3px] bg-black rounded-full"></span>
                 </button>
-                <button className='relative border rounded-3xl px-3 text-blue-500 h-[90%] font-bold cursor-pointer hover:bg-blue-100 border-gray-300'>Sign in</button>
+                <button className='relative border rounded-3xl px-3 text-blue-500 h-[90%] font-bold cursor-pointer hover:bg-blue-100 border-gray-300' onClick={handleSignIn}>Sign in</button>
             </div>
         </header>
+         </>
     )
 }
 
