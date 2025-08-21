@@ -14,9 +14,9 @@ function App(){
   return(
     <>
     <Header toggleSideBar={toggleSideBar} />
-    <section className='flex m-0 p-0'>
+    <section className='relative flex flex-row m-0 p-0 h-[calc(100vh-58px)] w-[100%] overflow-scroll'>
        <Sidebar collapseAsideBar={collapseAsideBar}/>
-       <div className='flex flex-row justify-center items-start w-[100%]'>
+       <div className='relative flex flex-row justify-center items-start w-[100%] h-[100%]'>
           <Main/>
        </div>
     </section>
