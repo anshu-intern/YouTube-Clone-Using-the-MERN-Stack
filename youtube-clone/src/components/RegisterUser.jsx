@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import icon from '../assets/icons/head_icon.png'
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function RegisterUser(){
     const [loading, setLoading] = useState(true);
@@ -11,6 +12,16 @@ function RegisterUser(){
     function hideLoader(){
         setFormLoad(false)
         setLoading(false)
+    }
+
+    async function handleRegisterClick(){
+        setLoading(true);
+        const resp = await axios.post("http://localhost:3000/api/user/register");
+        if(resp.status !== 201){
+            alert("user registered aborted.")
+        }
+        alert(`${resp.status} user registered successfully.`)
+        navigate("/login");
     }
 
     function handleLoginClick(){
@@ -46,7 +57,7 @@ function RegisterUser(){
                     <iframe src={register_url} onLoad={hideLoader} className='relative h-[100%] w-[100%] border rounded '></iframe>
                 </div>
                 <div className='flex flex-col gap-0 justify-center items-center py-2'>
-                    <button className='bg-blue-700 text-white h-[40px] border-blue-700 rounded-3xl cursor-pointer hover:bg-blue-900 px-5' onClick={handleLoginClick}>Continue to login</button>
+                    <button className='bg-blue-700 text-white h-[40px] border-blue-700 rounded-3xl cursor-pointer hover:bg-blue-900 px-5' onClick={handleRegisterClick}>Register user</button>
                     <button className='text-blue-700 text-[14px] cursor-pointer border-white bg-white hover:underline font-bold rounded-3xl h-[40px] px-3' onClick={handleLoginClick}>Already have an account? Go back to login.</button>
                     <span className='underline cursor-pointer text-red-500' onClick={handleHomepage}>Go to homepage.</span>
                 </div>
