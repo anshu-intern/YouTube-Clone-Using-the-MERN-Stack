@@ -61,7 +61,7 @@ export async function loginUser(req, res){
         const payload = { username: user.username , email: user.email}
         const accessToken =  jwt.sign(payload, process.env.JWT_SECRET , {expiresIn: '15m'}); 
 
-        res.status(200).json({message: "login successful",accessToken: accessToken});
+        res.status(200).json({message: "login successful", accessToken: accessToken});
 
     } catch(err){
         console.error(err);

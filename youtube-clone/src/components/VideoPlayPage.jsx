@@ -4,8 +4,8 @@ import MainVideoCard from './MainVideoCard';
 function VideoPlayPage(){
     return(
         <>
-        <section className="relative h-[100%] w-[100%] flex justify-start items-start gap-1 p-2 border overflow-scroll">
-            <div className="relative h-[auto] w-7/10 flex flex-col justify-start gap-2 items-start pt-10">
+        <section className="relative h-[100%] w-[100%] flex justify-start items-start gap-5 py-5 px-[30px] overflow-scroll">
+            <div className="relative h-[auto] w-3/4 flex flex-col justify-start gap-2 items-start">
                 <div className="relative w-[100%] h-[auto] rounded-xl overflow-hidden">
                     <video src={"https://www.w3schools.com/html/mov_bbb.mp4"} controls className="relative w-[100%] h-[auto]"></video>
                 </div>
@@ -61,7 +61,7 @@ function VideoPlayPage(){
 
             </div>
 
-            <div className="relative h-[auto] w-3/10 flex flex-col justify-start items-start border pt-10 px-2">
+            <div className="relative h-[auto] w-1/4 flex flex-col justify-start items-start border pt-10 px-2">
                 <span className="font-medium pb-2">Related videos</span>
                 
             </div>

@@ -1,16 +1,26 @@
 import { useNavigate } from 'react-router-dom';
 import icon from '../assets/icons/head_icon.png'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useContext } from 'react';
+import userContext from '../assets/utils/userContext';
+import { jwtDecode } from 'jwt-decode';
 
 function Login(){
     const [loading,setLoading] = useState(false);
-    const [UserName, setUserName] = useState(null);
+    const [UserName, setUserName] = useState('');
     const [UserNameErr, setUserNameErr] = useState(false);
-    const [Password, setPassword] = useState(null);
+    const [Password, setPassword] = useState('');
     const [PasswordErr, setPasswordErr] = useState(false);
     const [next, setNext] = useState(false);
+    const { loggedInUser, setLoggedInUser } = useContext(userContext);
     const navigate = useNavigate();
+    
+    useEffect(() => {
+        if(loggedInUser){
+            navigate("/");
+        }
+    }, [loggedInUser]);
 
     function handleCreateAccount(){
         setLoading(true)
@@ -55,8 +65,9 @@ function Login(){
                 return
             }
             setPasswordErr(false);
-            navigate("/");
-
+            localStorage.setItem('Token', resp.data.accessToken);
+            const decoded = jwtDecode(resp.data.accessToken);
+            setLoggedInUser(decoded);
         } catch(err){
             setPasswordErr(true);
         } finally{
@@ -80,8 +91,8 @@ function Login(){
                 </div>
                 <div className= {`flex flex-col gap-9 justify-center items-start w-[50%] h-[100%] p-4 overflow-hidden transition-all duration-500 ease-in-out ${ next ? 'hidden pointer-events-none' : ' ' }`}>
                     <div className='relative w-[100%]'>
-                        <input type='text' placeholder='' id='name' className={`peer outline-1 rounded p-3 w-[100%] focus:outline-2 'focus:outline-blue-700' ${ UserNameErr ? 'outline-red-700 outline-2' : 'outline-blue-700' }`}  onChange={ e => handleUserNameInput(e)}></input>
-                        <label for="name" class="absolute left-4 px-1 -top-3.5 bg-white text-gray-600 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-600 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-blue-700 peer-focus:bg-white peer-focus:px-1">Username or email</label>
+                        <input type='text' placeholder='' id='name' value={UserName} className={`peer outline-1 rounded p-3 w-[100%] focus:outline-2 focus:outline-blue-700 ${ UserNameErr ? 'outline-red-700 outline-2' : 'outline-blue-700' }`}  onChange={ e => handleUserNameInput(e)}></input>
+                        <label htmlFor="name" className="absolute left-4 px-1 -top-3.5 bg-white text-gray-600 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-600 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-blue-700 peer-focus:bg-white peer-focus:px-1">Username or email</label>
                     </div>
                     <p className='text-[14px]'>Not your computer? Use a Private Window to sign in.</p>
                     <div className='flex flex-row gap-6 justify-end items-center w-[100%]'>
@@ -91,8 +102,8 @@ function Login(){
                 </div>
                 <div className= {`flex flex-col gap-9 justify-center items-start w-[50%] h-[100%] p-4 overflow-hidden transition-all duration-500 ease-in-out ${ !next ? ' hidden pointer-events-none' : '' }`}>
                     <div className='relative w-[100%]'>
-                        <input type='password' placeholder='' id='password' className='peer outline-1 rounded p-3 w-[100%] focus:outline-2 focus:outline-blue-700' onChange={ e => handlePasswordInput(e)}></input>
-                        <label for="password" class="absolute px-1 left-4 -top-2.5 bg-white text-gray-600 text-sm transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-600 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-700 peer-focus:bg-white peer-focus:px-1">Password</label>
+                        <input type='password' placeholder='' id='password' value={Password} className='peer outline-1 rounded p-3 w-[100%] focus:outline-2 focus:outline-blue-700' onChange={ e => handlePasswordInput(e)}></input>
+                        <label htmlFor="password" className="absolute px-1 left-4 -top-2.5 bg-white text-gray-600 text-sm transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-600 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-700 peer-focus:bg-white peer-focus:px-1">Password</label>
                     </div>
                     <div className='flex flex-row gap-6 justify-end items-center w-[100%]'>
                         <button className='bg-blue-700 text-white w-[78px] h-[40px] border-blue-700 rounded-3xl cursor-pointer hover:bg-blue-900 px-3' onClick={handleLogin}>Login</button>

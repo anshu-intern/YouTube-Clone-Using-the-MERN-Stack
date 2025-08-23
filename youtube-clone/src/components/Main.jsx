@@ -1,10 +1,13 @@
 import MainVideoCard from "./MainVideoCard";
+import { useContext } from "react";
+import userContext from "../assets/utils/userContext";
 
 function Main(){
-    const login = true;
+    const {loggedInUser} = useContext(userContext);
+    
     return(
         <>
-        { !login && (
+        { !loggedInUser && (
         
         <section className="relative flex flex-row justify-center items-center pt-2 w-[50%] max-w-[750px]">
             <div className="relative w-[100%] border-white rounded-xl p-4 pt-8 shadow-xl">
@@ -15,9 +18,9 @@ function Main(){
         )
         }
         {
-            login && (
+            loggedInUser && (
         <section className="relative flex flex-col justify-start items-start gap-4 w-[100%] h-[100%] px-2">
-            <div className="relative sticky top-0 z-10 bg-white h-[auto] w-[100%] flex flex-row shrink-0 flex-wrap justify-start items-start gap-3 px-4 py-3">
+            <div className="relative sticky top-0 h-[auto] w-[100%] flex flex-row shrink-0 flex-wrap justify-start items-start gap-3 px-4 py-3">
                 <button className="px-3 py-[6px] rounded-xl bg-black text-white text-[16px]">All</button>
                 <button className="px-3 py-[6px] rounded-xl bg-gray-200 text-black font-medium text-[14px]">arijit singh</button>
                 <button className="px-3 py-[6px] rounded-xl bg-gray-200 text-black font-medium text-[14px]">mixes</button>
