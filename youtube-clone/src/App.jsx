@@ -2,11 +2,12 @@ import { useState } from 'react';
 import './app.css'
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
-import { Outlet, useLocation } from 'react-router-dom';
+import { matchPath, Outlet, useLocation } from 'react-router-dom';
 
 function App(){
   const [collapseAsideBar, setcollapseAsideBar] = useState(false);
   const location = useLocation();
+  const isWatchPage = matchPath('/watch/:id', location.pathname);
 
   function toggleSideBar(){
     setcollapseAsideBar(!collapseAsideBar);
@@ -16,7 +17,7 @@ function App(){
     <>
     <Header toggleSideBar={toggleSideBar} />
     <section className='relative flex flex-row m-0 p-0 h-[calc(100vh-58px)] w-[100%] overflow-scroll'>
-       { location.pathname !== '/watch' && <Sidebar collapseAsideBar={collapseAsideBar}/> }
+       { !isWatchPage && <Sidebar collapseAsideBar={collapseAsideBar}/> }
        <div className='relative flex flex-row justify-center items-start w-[100%] h-[100%]'>
           <Outlet/>
        </div>

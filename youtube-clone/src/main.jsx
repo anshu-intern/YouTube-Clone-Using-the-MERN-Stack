@@ -26,7 +26,7 @@ const appRoute = createBrowserRouter([
         element: <ProtectedRoute><ChannelHome/></ProtectedRoute>
       },
       {
-        path: "watch",
+        path: "watch/:video_id",
         element: <VideoPlayerPage/>
       }
     ]

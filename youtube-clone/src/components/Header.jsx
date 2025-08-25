@@ -12,6 +12,8 @@ function Header({toggleSideBar}){
     const [userMenu , setUserMenu] = useState(false);
     const [showCreateChannel, setShowCreateChannel] = useState(false);
     const navigate = useNavigate();
+    const [ searchText, setSearchText ] = useState('');
+    const [ searchBar, setSearchBar ] = useState(false);
 
     function handleSignIn(){
         setLoading(true);
@@ -46,6 +48,19 @@ function Header({toggleSideBar}){
         setTimeout(() => { navigate("/") });
     }
 
+    function handleSearchText(e){
+        setSearchText(e.target.value.trim());
+    }
+
+    function handleSearch(){
+        if(searchText.length > 0){
+            navigate(`/?q=${encodeURIComponent(searchText)}`);
+        }
+        else{
+             navigate(`/`);
+        }
+    }
+
     return(
         <>
         {
@@ -77,9 +92,9 @@ function Header({toggleSideBar}){
                 </div>
             </div>
             <div className='relative flex flex-row justify-center items-center h-[100%] border border-gray-500 rounded-3xl overflow-hidden'>
-                <div className='relative h-[60%] pl-3'><img src={serachicon} alt='searchicon' className='relative h-[100%] overflow-hidden'/></div>
-                <input type="text" name="search_query" placeholder="Search" className='relative w-[550px] h-[100%] focus:outline-none px-4 pl-5'/>
-                <button className='relative h-[100%] px-2.5 border-l px-6 bg-gray-100 cursor-pointer hover:bg-gray-200'><img src={serachicon} alt='search icon' className='relative h-[60%] overflow-hidden'></img></button>
+                { searchBar && <div className='relative h-[60%] pl-3'><img src={serachicon} alt='searchicon' className='relative h-[100%] overflow-hidden'/></div> }
+                <input type="text" name="search_query" placeholder="Search" className='relative w-[550px] h-[100%] focus:outline-none px-4 pl-5' onChange={ e => {handleSearchText(e)}} onFocus={e => setSearchBar(true)} onBlur={e => setSearchBar(false)}/>
+                <button className='relative h-[100%] px-2.5 border-l px-6 bg-gray-100 cursor-pointer hover:bg-gray-200' onClick={handleSearch}><img src={serachicon} alt='search icon' className='relative h-[60%] overflow-hidden'></img></button>
             </div>
             <div className="relative flex flex-row gap-3 h-[100%] items-center px-2">
                 {

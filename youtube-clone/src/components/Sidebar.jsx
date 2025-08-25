@@ -16,16 +16,19 @@ import podcasts_icon from '../assets/icons/podcasts_icon.png'
 import youtubepremium_icon from '../assets/icons/head_icon.png'
 import youtubemusic_icon from '../assets/icons/youtubemusic_icon.png'
 import youtubekids_icon from '../assets/icons/youtubekids_icon.png'
+import { Link } from 'react-router-dom'
 
 
 function Sidebar({collapseAsideBar}){
     return(
         <aside className= {`relative flex flex-col justify-start items-start max-w-[240px] h-[100%] overflow-scroll px-[14px] ${collapseAsideBar? 'p-0' : ''} `}>
             <div className ={`relative flex flex-col gap-1 border-b border-gray-300 w-[100%] p-2 ${collapseAsideBar? 'border-none p-0 max-w-[80%]' : ''}`}>
+                <Link to="/">
                 <div className={`flex justify-start items-center gap-6 h-[38px] hover:bg-gray-100 rounded-xl px-4 py-2 cursor-pointer ${collapseAsideBar? 'flex-col gap-[6px] h-[100%]' : ''}`}>
                     <img src={home_icon} className= "h-[24px]"/>
                     <span className={`font-light ${collapseAsideBar? 'text-[10px]' : 'text-[14px]'}`}>Home</span>
                 </div>
+                </Link>
                 <div className={`flex justify-start items-center gap-6 h-[38px] hover:bg-gray-100 rounded-xl px-4 py-2 cursor-pointer ${collapseAsideBar? 'flex-col gap-[6px] h-[100%]' : ''}`}>
                     <img src={shorts_icon} className='h-[24px]'/>
                     <span className={`font-light ${collapseAsideBar? 'text-[10px]' : 'text-[14px]'}`}>Shorts</span>
@@ -136,11 +139,11 @@ function Sidebar({collapseAsideBar}){
                     <span>Terms</span>
                     <span>Privacy</span>
                     <span>Policy & Safety</span>
-                    <span>How YouTube works</span>
+                    <span>How YouTube-clone works</span>
                     <span>Test new features</span>
                 </div>
                 <div className="relative flex flex-row flex-wrap gap-1 w-[100%] p-4 text-sm">
-                    <span>© 2025 Google LLC.</span>
+                    <span className='text-[14px]'>© 2025 Youtube-clone LLC.</span>
                 </div>
                 </>
             }

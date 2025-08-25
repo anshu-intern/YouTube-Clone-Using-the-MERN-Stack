@@ -1,4 +1,5 @@
 import userRoute from "./user.route.js";
+import videoRoute from "./video.route.js";
 
 //Handle not defined || invalid routes
 function invalidRoute(req,res,next){
@@ -13,6 +14,7 @@ function globalErrHandle(err,req,res,next){
 
 function routes(app){
     app.use("/api/user", userRoute);
+    app.use("/api/video", videoRoute);
 
     //Handle invalid routes
     app.use(invalidRoute);
