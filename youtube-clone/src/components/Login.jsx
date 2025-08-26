@@ -86,8 +86,8 @@ function Login(){
             <article className='flex flex-row justify-center items-start w-[1024px] h-[380px] max-w-[1024px] max-h-[380px] overflow-hidden bg-white p-6 rounded-2xl'>
                 <div className='flex flex-col gap-2 justify-start items-start w-[50%] border-red-900 p-4'>
                     <img src={icon} alt='youtube_icon' className='h-[50px]'/>
-                    <h1 className='text-[40px] font-medium'>Sign in</h1>
-                    <span className='text-[16px] font-light'>to continue to YouYube - clone</span>
+                    <h1 className='text-[40px] font-medium'>{ next ? "Welcome" : "Sign in" }</h1>
+                    <span className={`text-[16px] ${ next ? "font-medium" : " font-light"}`}>{ next ? `${UserName}` : "to continue to YouYube - clone" }</span>
                 </div>
                 <div className= {`flex flex-col gap-9 justify-center items-start w-[50%] h-[100%] p-4 overflow-hidden transition-all duration-500 ease-in-out ${ next ? 'hidden pointer-events-none' : ' ' }`}>
                     <div className='relative w-[100%]'>

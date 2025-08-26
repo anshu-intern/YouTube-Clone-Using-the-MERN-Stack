@@ -1,32 +1,29 @@
 import { useParams, Link } from 'react-router-dom';
-import icon from '../assets/icons/userProfilePic.jpg';
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { formatDistanceToNowStrict } from 'date-fns';
 import userContext from '../assets/utils/userContext';
 import like_img from '../assets/icons/like.png';
 import dislike_img from '../assets/icons/unlike.png';
+import Comment from './Comment';
 
 function VideoPlayPage(){
     const { video_id } = useParams();
-    const [ video, setVideo ] = useState([]);
+    const [ video, setVideo ] = useState({});
     const [ otherVideos, setOtherVideos] = useState([]);
-    const [ addComment, setAddComment ] = useState(false);
-    const [ commentValue, setCommentValue ] = useState('');
     const { loggedInUser } = useContext(userContext);
 
     useEffect(()=>{
         async function fetchVideo(){
             try{
                 const vid = await axios.get(`http://localhost:3000/api/video/${video_id}`);
-                console.log(vid.data.data)
                 setVideo(vid.data.data);
             } catch(err){
                 console.error(err);
             }
         }
         fetchVideo();
-    }, [video_id]);
+    }, [video_id, loggedInUser]);
 
     useEffect(()=>{
         async function loadExtra() {
@@ -38,7 +35,7 @@ function VideoPlayPage(){
                 }   
             }
             loadExtra();
-    }, [video_id]);
+    }, [video_id, loggedInUser]);
 
     function formatViewsIntl(views) {
         const formatter = new Intl.NumberFormat('en', {
@@ -50,10 +47,6 @@ function VideoPlayPage(){
 
     function uploadDate(date){
         return formatDistanceToNowStrict(new Date(date), { addSuffix: true });
-    }
-
-    function handleComment(e){
-        setCommentValue(e.target.value);
     }
 
     return(
@@ -88,56 +81,7 @@ function VideoPlayPage(){
                 </div>
 
                 <div className="relative w-[100%] h-[auto] flex flex-col gap-2">
-                    <span className="text-[20px] font-bold py-1">{video.comments?.length} Comments</span>
-                    {
-                        addComment && 
-                        <div className='w-[100%] py-2 '>
-                            <span className='py-1'>Commenting as</span>
-                            <div className='w-[100%] flex justify-start items-start gap-2 py-1'>
-                                <div className='h-[40px] w-[40px] border rounded-full bg-green-900 text-white flex justify-center items-center text-[20px]'><span>{loggedInUser.username.charAt(0)}</span></div>
-                                <div className='flex flex-col justify-center items-start w-[100%]'>
-                                    <span>{loggedInUser.username}</span>
-                                    <span>{loggedInUser.email}</span>
-                                </div>
-                            </div>
-                        </div>    
-                    }
-                    <input type="text" placeholder="Add a comment..." className="relative w-[100%] outline-0 border-b-1 py-1 mb-4" onFocus={e => setAddComment(true)} onChange={e => handleComment(e)}></input>
-                    
-                    { addComment && 
-                        <div className="flex justify-between items-center">
-                            <span className="text-[12px]">By completing this action you are creating a channel and agree to YouTube-clone's Terms of Service.</span>
-                            <div className="flex gap-3">
-                            <button className="text-[14px] font-medium px-3 py-2 rounded-3xl hover:bg-gray-200" onClick={e => setAddComment(false)}>Cancel</button>
-                            <button className="text-[14px] font-medium px-3 py-2 rounded-3xl bg-gray-100 hover:bg-gray-200">Comment</button>
-                            </div>
-                        </div>
-                    }
-
-                    {
-                        video.comments?.map( (comment ,index) => (
-                            <div key={index} className="relative w-[100%] h-[auto] flex gap-3 justify-start pb-10">
-                                <div className="relative h-[100%] w-[50px] overflow-hidden rounded-full">
-                                    <img src={icon} alt='icon' className='relative h-[50px] w-[50px] rounded-full'/>
-                                </div>
-                                <div className="w-[80%] flex flex-col gap-1">
-                                    <div className='w-[100%]'>
-                                        <span className='text-[14px] font-bold'>@{comment.userId}</span>
-                                        <span className='pl-2 text-gray-500 text-[12px]'>{uploadDate ? uploadDate(comment.timestamp) : " "}</span>
-                                    </div>
-                                    <span className='text-[14px]'>{comment.text}</span>
-                                    <div className="pt-3 flex justify-start items-center">
-                                        <button className="relative h-[100%] border-r border-gray-400 px-6 py-2 bg-gray-100 cursor-pointer hover:bg-gray-200 rounded-tl-3xl rounded-bl-3xl">Like</button>
-                                        <button className="relative h-[100%] px-4 py-2 bg-gray-100 cursor-pointer hover:bg-gray-200 rounded-tr-3xl rounded-br-3xl">Dislike</button>
-                                    </div>
-                                </div>
-                                <div className='w-[10%] flex flex-col justify-center items-center gap-2'>
-                                    <button className='border rounded-3xl px-3'>Modify</button>
-                                    <button className='border rounded-3xl px-3'>Delete</button>
-                                </div>
-                            </div>
-                        ))
-                    }
+                    <Comment videoId={video_id} user={loggedInUser} item={video?.comments}/>
                 </div>
 
             </div>
