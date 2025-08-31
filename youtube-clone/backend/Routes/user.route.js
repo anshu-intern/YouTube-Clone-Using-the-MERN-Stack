@@ -1,9 +1,10 @@
 import express from 'express';
-import { loginUser, loginUserName, registerUser } from '../Controller/user.controller.js';
+import { loginUser, checkLoginUserName, registerUser, getUserData } from '../Controller/user.controller.js';
 
 const router = express.Router();
 
-router.get("/user/:u", loginUserName);
+router.get("/user/:u", checkLoginUserName);
+router.get("/user/u/:u", getUserData);
 router.post("/login", loginUser);
 router.post("/register", registerUser);
 

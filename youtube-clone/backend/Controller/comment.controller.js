@@ -2,13 +2,13 @@ import videoModel from "../Model/video.model.js";
 
 export async function addComment(req, res){
     try{
-        const { videoId, userId, text } = req.body;
+        const { videoId, text } = req.body;
         const newComment = {
-            commentId: 9993,
-            userId,
-            text
+            userId: req.user_id,
+            text: text
         }
-        const video = await videoModel.findOne({ videoId : videoId });
+       
+        const video = await videoModel.findById(videoId);
         if (!video) {
             return res.status(404).json({ message: "Video not found" });
         }
@@ -16,10 +16,10 @@ export async function addComment(req, res){
 
         await video.save();
 
-        res.status(201).json({ message: "Comment added successfully", data: video.comments });
+        return res.status(201).json({ message: "Comment added successfully", data: video.comments });
     } catch(err){
         console.error(err);
-        res.status(500).json({success: false, message: "Internal server error."});
+        return res.status(500).json({success: false, message: "Internal server error.", err: err});
     }
 } 
 

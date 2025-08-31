@@ -9,6 +9,7 @@ function Main(){
     const [ videos , setVideos ] = useState([]);
     const [ category, setCategory ] = useState([]);
     const [ filteredVid, setFilteredVid ] = useState([]);
+    const [ activeCat, setActiveCat ] = useState("all");
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const searchText = queryParams.get('q');
@@ -44,9 +45,12 @@ function Main(){
     
     function setFilter(e){
         if(e.target.value === 'all'){
+            setActiveCat("all");
             setFilteredVid(videos);
+            setCategory( [...new Set( videos.map( i => i.category).filter(cat => cat) )] );
             return
         }
+        setActiveCat(e.target.value);
         setFilteredVid(videos.filter( i => i.category === e.target.value));
     }
     
@@ -66,11 +70,12 @@ function Main(){
             loggedInUser && (
         <section className="relative flex flex-col justify-start items-start gap-4 w-[100%] h-[100%] px-2">
             <div className="relative sticky top-0 h-[auto] w-[100%] flex flex-row shrink-0 flex-wrap justify-start items-start gap-3 px-4 py-3">
-                { !searchText && <button value='all' className="px-3 py-[6px] rounded-xl bg-black text-white text-[16px]" onClick={ e => setFilter(e)}>All</button> }
-                { category.map( (item, index) => (<button key={index} value={item} className="px-3 py-[6px] rounded-xl bg-gray-200 text-black font-medium text-[14px] hover:bg-gray-300" onClick={ e => setFilter(e)}>{item}</button>)) }
+                { <button value='all' className={`px-3 py-[6px] rounded-xl ${activeCat === "all" ? "bg-black text-white" : "bg-gray-200 text-black hover:bg-gray-300"} text-[16px] cursor-pointer`} onClick={ e => setFilter(e)}>All</button> }
+                { category.map( (item, index) => (<button key={index} value={item} className={`px-3 py-[6px] rounded-xl ${activeCat === item ? "bg-black text-white" : "bg-gray-200 text-black hover:bg-gray-300"} font-medium text-[14px] cursor-pointer`} onClick={ e => setFilter(e)}>{item}</button>)) }
             </div>
             <div className="relative h-[auto] w-[100%] flex flex-row flex-wrap gap-3 px-2 pb-10 overflow-scroll">
-                { filteredVid.map( (item, index) => ( <MainVideoCard key={index} value={item} /> )) }
+                { filteredVid?.length === 0 && <div className="w-[100%] text-center font-medium text-[20px]">Oops! No videos found...</div>}
+                { filteredVid.map( (item, index) => ( <MainVideoCard key={item._id} value={item} /> )) }
             </div>
         </section>
         )

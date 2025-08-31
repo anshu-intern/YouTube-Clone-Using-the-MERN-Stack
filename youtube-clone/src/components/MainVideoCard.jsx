@@ -16,18 +16,18 @@ function MainVideoCard({value}){
     return(
         <>
         <article className='relative flex flex-col justify-start items-start gap-0 p-1 w-[32%] h-[46%] min-h-[380px] overflow-hidden '>
-            <div className='relative overflow-hidden w-[100%] h-[74%] rounded-xl'>
-                <Link to={`watch/${value.videoId}`} className='w-[100%]'>
-                    <img src={userProfilePic } alt='video image' className='h-[100%] w-[100%]'/>
+            <div className='relative overflow-hidden w-[100%] h-[70%] rounded-xl'>
+                <Link to={`watch/${value._id}`} className='w-[100%]'>
+                    <img src={`../../backend/${value.thumbnailUrl}`} alt='video image' className='h-[100%] w-[100%]'/>
                </Link>
             </div>
-            <Link to={`watch/${value.videoId}`} className='w-[100%]'>
+            <Link to={`watch/${value._id}`} className='w-[100%]'>
                 <span className='w-[100%] text-[16px] font-bold text-black py-1'>{value.title}</span>
             </Link>
-            <Link to={`watch/${value.videoId}`} className='w-[100%]'>
+            <Link to={`watch/${value._id}`} className='w-[100%]'>
                 <span className='w-[100%] text-[14px] text-gray-500 py-1'>{value.uploader}</span>
             </Link>
-            <Link to={`watch/${value.videoId}`} className='w-[100%]'>
+            <Link to={`watch/${value._id}`} className='w-[100%]'>
                 <span className='w-[100%] text-[14px] text-gray-500 py-1'>{ formatViewsIntl(value.views) } * {uploadDate}</span>
             </Link>
         </article>

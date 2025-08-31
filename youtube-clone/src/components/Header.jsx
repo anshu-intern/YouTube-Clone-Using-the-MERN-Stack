@@ -1,10 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import icon from '../assets/icons/head_icon.png'
 import serachicon from '../assets/icons/searchicon.png';
 import { useState } from 'react';
 import { useContext } from 'react';
 import userContext from '../assets/utils/userContext';
-import CreateChannel from './CreateChannel'
+import CreateChannel from './CreateChannel';
+import axios from 'axios';
 
 function Header({toggleSideBar}){
     const user = useContext(userContext);
@@ -33,9 +34,24 @@ function Header({toggleSideBar}){
         setShowCreateChannel(false);
     }
 
-    function handleCreateChanelClick(){
-        setShowCreateChannel(false);
-        navigate("/channel");
+    async function handleCreateChannelClick(e){
+        try{
+            const formData = new FormData();
+            formData.append('channelName', e.channelName);
+            formData.append('channelHandle', e.channelHandle);
+            if (e.channelPic){
+                formData.append('channelImage', e.channelPic);
+            }
+            const token = localStorage.getItem('Token');
+            const res = await axios.post("http://localhost:3000/api/channel/", formData, { headers: {Authorization: `JWT ${token}` , 'Content-Type': 'multipart/form-data'}});
+            if (res.status === 201){
+                
+                setShowCreateChannel(false);
+                navigate(`/channel/${res.data.channelId}`);
+            }
+        } catch(err){
+            console.error(err);
+        }
     }
 
     function navigateHome(){
@@ -73,7 +89,7 @@ function Header({toggleSideBar}){
             showCreateChannel && 
             <div className='absolute z-30 top-[20%] left-[30%]'>
                 <div className='relative w-[100% h-[100%] flex justify-center items-center'>
-                    <CreateChannel cancel={handleCloseCreateChannel} create={handleCreateChanelClick}/>
+                    <CreateChannel cancel={handleCloseCreateChannel} create={handleCreateChannelClick}/>
                 </div>
             </div>
         }
@@ -108,19 +124,25 @@ function Header({toggleSideBar}){
                 {
                     user.loggedInUser ? (
                         <div className='relative h-[40px] rounded-full w-[40px] font-bold bg-green-900 text-white flex justify-center items-center cursor-pointer z-10' onClick={handleUserIcon}>
-                            <span>{user.loggedInUser.username.charAt(0).toUpperCase()}</span>
+                            { user.loggedInUser.avatar ? (<img src={user.loggedInUser.avatar} alt="user"/>) : (<span>{user.loggedInUser.username.charAt(0).toUpperCase()}</span>)}
                             { userMenu && 
-                                <div className='cursor-text py-2 absolute h-[auto] w-[280px] flex flex-col justify-start items-center gap-0 border border-white rounded-xl top-10 right-0 font-normal bg-white shadow-xl text-black'>
-                                    <div className='flex flex-row justify-center items-start gap-4 w-[100%] border-b border-gray-300'>
+                                <div className='cursor-text py-2 absolute h-[auto] w-[280px] flex flex-col justify-start items-center gap-0 border border-gray-200 shadow-2xl rounded-xl top-10 right-0 font-normal bg-white shadow-xl text-black'>
+                                    <div className='flex flex-row justify-center items-start gap-4 w-[100%] border-b border-gray-300 pb-4'>
                                         <div className='ml-4 relative h-[40px] rounded-full w-[50px] bg-green-900 text-white flex justify-center items-center'>
-                                             <span>{user.loggedInUser.username.charAt(0).toUpperCase()}</span>
+                                            { user.loggedInUser.avatar ? (<img src={user.loggedInUser.avatar} alt="user"/>) : (<span>{user.loggedInUser.username.charAt(0).toUpperCase()}</span>)}
                                         </div>
                                         <div className='flex flex-col w-[100%]'>
                                             <span className='w-[100%]  text-[16px] font-medium'>{user.loggedInUser.username}</span>
                                             <span className='w-[100%] text-[14px] font-medium '>{user.loggedInUser.email}</span>
-                                            <span className='w-[100%] mt-3 text-[14px] font-medium text-blue-500 pb-4 cursor-pointer' onClick={handleCreateChannel}>Create a channel</span>
+                                            { user.loggedInUser.channels.length === 0 && <span className='w-[100%] mt-3 text-[14px] font-medium text-blue-500 pb-4 cursor-pointer' onClick={handleCreateChannel}>Create a channel</span> }
                                         </div>
                                     </div>
+                                    { user.loggedInUser.channels.length !== 0 && 
+                                        <div className='w-[100%] border-b border-gray-300 py-2 flex flex-col justify-start'>
+                                            <span className='pl-4 py-1 font-medium text-[14px] text-gray-500'>Channels</span>
+                                            {user.loggedInUser.channels.map((channel,index) => (<Link key={channel._id} to={`/channel/${channel._id}`} className='text-[14px] py-2 pl-4 cursor-pointer hover:bg-gray-200'>{channel.channelName}</Link>))}
+                                        </div>
+                                    }
                                     <div className='w-[100%] flex justify-center items-center'>
                                         <span className='w-[100%] cursor-pointer hover:bg-gray-200 text-center py-2 font-light' onClick={handleSignOut}>Sign out</span>
                                     </div>

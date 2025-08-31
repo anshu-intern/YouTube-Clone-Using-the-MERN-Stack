@@ -47,6 +47,7 @@ function Login(){
                 return
             }
             setUserNameErr(false);
+            setUserName(resp.data.user);
             setNext(true);
         } catch(err){
             setUserNameErr(true);

@@ -22,7 +22,7 @@ const appRoute = createBrowserRouter([
         element: <Main/>
       },
       {
-        path: "channel",
+        path: "channel/:channel_id",
         element: <ProtectedRoute><ChannelHome/></ProtectedRoute>
       },
       {

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { formatDistanceToNowStrict } from 'date-fns';
 import axios from 'axios';
 
-function Comment({ videoId, user, item }){
+function Comment({ videoId, user, item, uploader }){
     const [ comment, setComment ] = useState([]);                       // comment array
     const [ commentValue, setCommentValue ] = useState('');             //setting add comment value
     const [ modifyCommentValue, setModifyCommentValue ] = useState(''); //setting modified comment value
@@ -37,10 +37,9 @@ function Comment({ videoId, user, item }){
         try{
             const newComm = {
                 videoId : videoId,
-                userId : user.username,
                 text : commentValue.trim()
             }
-            const res = await axios.post("http://localhost:3000/api/comment/", newComm);
+            const res = await axios.post("http://localhost:3000/api/comment/", newComm, {headers: {Authorization: `JWT ${localStorage.getItem('Token')}`} });
             if(res.status === 201)
             {
                 setComment(res.data.data);
@@ -111,7 +110,7 @@ function Comment({ videoId, user, item }){
                             </div>
                         </div>    
                     }
-                    <input type="text" placeholder="Add a comment..." value={commentValue} className="relative w-[100%] outline-0 border-b-1 py-1 mb-4" onFocus={e => setAddComment(true)} onChange={e => handleComment(e)}></input>
+                    { user.userId !== uploader  && <input type="text" placeholder="Add a comment..." value={commentValue} className="relative w-[100%] outline-0 border-b-1 py-1 mb-4" onFocus={e => setAddComment(true)} onChange={e => handleComment(e)}></input>}
                     { newComment && <span className='text-green-700 pb-4 font-medium'>Commented added successfully!</span> }
                     { addComment && 
                         <div className="flex justify-between items-center">
@@ -125,7 +124,7 @@ function Comment({ videoId, user, item }){
 
                     {
                         comment?.slice().sort((a,b)=> new Date(b.updatedAt) - new Date(a.updatedAt) ).map( (comment ,index) => (
-                            <div key={comment.commentId} className="relative w-[100%] h-[auto] flex gap-3 justify-start pb-10">
+                            <div key={comment._id} className="relative w-[100%] h-[auto] flex gap-3 justify-start pb-10">
                                 <div className="relative h-[100%] w-[50px] overflow-hidden rounded-full">
                                     <img src={icon} alt='icon' className='relative h-[50px] w-[50px] rounded-full'/>
                                 </div>
@@ -134,22 +133,22 @@ function Comment({ videoId, user, item }){
                                         <span className='text-[14px] font-bold'>@{comment.userId}</span>
                                         <span className='pl-2 text-gray-500 text-[12px]'>{uploadDate(comment.updatedAt)}</span>
                                     </div>
-                                    { editingCommentId !== comment.commentId ? (<span className='text-[14px] w-[100%]'>{comment.text}</span>) : (<input type="text" value={modifyCommentValue} className='text-[14px] outline-blue-700 p-1' ref={inputRef} onChange={(e) => {handleSetEditComment(e)}} ></input>)}
+                                    { editingCommentId !== comment._id ? (<span className='text-[14px] w-[100%]'>{comment.text}</span>) : (<input type="text" value={modifyCommentValue} className='text-[14px] outline-blue-700 p-1' ref={inputRef} onChange={(e) => {handleSetEditComment(e)}} ></input>)}
                                     <div className="pt-3 flex justify-start items-center">
                                         <button className="relative h-[100%] border-r border-gray-400 px-6 py-2 bg-gray-100 cursor-pointer hover:bg-gray-200 rounded-tl-3xl rounded-bl-3xl">Like</button>
                                         <button className="relative h-[100%] px-4 py-2 bg-gray-100 cursor-pointer hover:bg-gray-200 rounded-tr-3xl rounded-br-3xl">Dislike</button>
                                     </div>
                                 </div>
                                 <div className={`w-[10%] flex ${ editingCommentId? "flex-col" : "flex-row"} justify-center items-center gap-2`}>
-                                    { editingCommentId !== comment.commentId && (
+                                    { editingCommentId !== comment._id && user.userId === comment.userId && (
                                         <>
-                                        <button className=' rounded-3xl px-4 py-1 cursor-pointer hover:bg-gray-200' onClick={()=>handleOpenModifyComment(comment.commentId, comment.text)}><img src={edit_img} className='h-[30px] w-[100%]'/></button>
-                                        <button className=' rounded-3xl px-4 py-1 cursor-pointer hover:bg-gray-200' onClick={() => handleDeleteComment(comment.commentId)}><img src={del_img} className='h-[30px] w-[100%]'/></button>
+                                        <button className=' rounded-3xl px-4 py-1 cursor-pointer hover:bg-gray-200' onClick={()=>handleOpenModifyComment(comment._id, comment.text)}><img src={edit_img} className='h-[30px] w-[100%]'/></button>
+                                        <button className=' rounded-3xl px-4 py-1 cursor-pointer hover:bg-gray-200' onClick={() => handleDeleteComment(comment._id)}><img src={del_img} className='h-[30px] w-[100%]'/></button>
                                         </>) 
                                     }
-                                    { editingCommentId === comment.commentId && (
+                                    { editingCommentId === comment._id && (
                                         <>
-                                        <button className='rounded-3xl px-4 py-1 cursor-pointer bg-blue-600 text-white' onClick={() => handleModifyComment(comment.commentId)}>Modify</button> 
+                                        <button className='rounded-3xl px-4 py-1 cursor-pointer bg-blue-600 text-white' onClick={() => handleModifyComment(comment._id)}>Modify</button> 
                                         <button className='border rounded-3xl px-4 py-1 cursor-pointer bg-gray-600 text-white' onClick={handleCloseModifyComment}>Cancel</button>
                                         </>) 
                                     }

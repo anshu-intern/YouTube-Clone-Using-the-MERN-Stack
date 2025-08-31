@@ -1,21 +1,19 @@
-import mongoose, { mongo, Schema } from "mongoose";
+import mongoose from "mongoose";
 
 // Define comment schema
 const commentSchema = new mongoose.Schema({
-    commentId   : { type: String, required: true },
-    userId      : { type: String, required: true },
+    userId      : { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     text        : { type: String, required: true }
 }, { timestamps : true });
 
 // Defind video schema
 const videoSchema = new mongoose.Schema({
-    videoId         : { type : String, required : true, unique : true },
     title           : { type : String, required : true },
     thumbnailUrl    : { type : String, required : true },
     videoUrl        : { type : String, required : true },
     description     : { type : String, required : true },
     category        : { type : String, default : null },
-    channelId       : { type : String, required : true },
+    channelId       : { type: mongoose.Schema.Types.ObjectId, ref: "Channel", required: true },
     uploader        : { type : String, required : true },
     views           : { type : Number, default : 0 },
     likes           : { type : Number, default : 0 },
@@ -25,6 +23,6 @@ const videoSchema = new mongoose.Schema({
 }, { timestamps : true });
 
 // Define video model
-const videoModel = mongoose.model("video" , videoSchema);
+const videoModel = mongoose.model("Video" , videoSchema);
 
 export default videoModel;
