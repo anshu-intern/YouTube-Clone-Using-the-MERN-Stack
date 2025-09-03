@@ -65,8 +65,8 @@ export async function loginUser(req, res){
             return res.status(401).json({ message: "Incorrect password." });
         }
 
-        const payload = { userId: user._id, username: user.username , email: user.email , avatar: user.avatar , channels: user.channels}
-        const accessToken =  jwt.sign(payload, process.env.JWT_SECRET , {expiresIn: '15m'}); 
+        const payload = { userId: user._id, username: user.username , email: user.email , avatar: user.avatar , channels: user.channels , subs: user.subscribedChannels }
+        const accessToken =  jwt.sign(payload, process.env.JWT_SECRET , {expiresIn: '1m'}); 
 
         res.status(200).json({message: "login successful", accessToken: accessToken});
 
@@ -94,6 +94,14 @@ export async function checkLoginUserName(req, res){
 
 export async function getUserData(req, res){
     try{
+        const user = await userModel.findById(req.user_id).populate({
+            path: 'channels',
+            select: '_id channelName'
+        });
+
+        const data = { userId: user._id, username: user.username , email: user.email , avatar: user.avatar , channels: user.channels , subs: user.subscribedChannels };
+
+        return res.status(200).json({success: true, data: data});
 
     } catch(err){
         console.error(err);

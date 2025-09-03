@@ -1,9 +1,10 @@
 import edit_img from '../assets/icons/edit.png';
 import del_img from '../assets/icons/delete.png';
 import icon from '../assets/icons/userProfilePic.jpg';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { formatDistanceToNowStrict } from 'date-fns';
 import axios from 'axios';
+import userContext from '../assets/utils/userContext';
 
 function Comment({ videoId, user, item, uploader }){
     const [ comment, setComment ] = useState([]);                       // comment array
@@ -13,8 +14,8 @@ function Comment({ videoId, user, item, uploader }){
     const [ addComment, setAddComment ] = useState(false);              // for displaying add comment section
     const [ editingCommentId, setEditingCommentId ] = useState(null);   // for input text and actions to modify comment by commentId
     const inputRef = useRef(null);
+    const userCont = useContext(userContext);
 
-    
     useEffect(() => {
         setComment(item);
     }, [ videoId, user, item]);
@@ -23,7 +24,7 @@ function Comment({ videoId, user, item, uploader }){
         if (editingCommentId && inputRef.current) {
             inputRef.current.focus();
         }
-    }, [editingCommentId]);
+    }, [editingCommentId]);   
 
     function uploadDate(date){
         return formatDistanceToNowStrict(new Date(date), { addSuffix: true });
@@ -49,7 +50,13 @@ function Comment({ videoId, user, item, uploader }){
                 setTimeout(() => setNewComment(false), 5000);
             }
         } catch(err){
-            console.error(err);
+            if(err.response.status === 401){
+                localStorage.removeItem('Token');
+                userCont.setLoggedInUser(null);
+                alert("User session expired. Please login and try again.");
+            } else {
+                alert("Error occured! Please try after some time.");
+            }
         }
     }
 
@@ -69,7 +76,7 @@ function Comment({ videoId, user, item, uploader }){
 
     async function handleModifyComment(e){
         try{
-            const res = await axios.patch(`http://localhost:3000/api/comment/${videoId}/${e}`, { text: modifyCommentValue.trim() });
+            const res = await axios.patch(`http://localhost:3000/api/comment/${videoId}/${e}`, { text: modifyCommentValue.trim() }, {headers: {Authorization: `JWT ${localStorage.getItem('Token')}`} });
             if (res.status === 200 )
             {
                 setModifyCommentValue(" ");
@@ -77,20 +84,33 @@ function Comment({ videoId, user, item, uploader }){
                 setComment(res.data.data);
             }
         } catch(err){
-            console.error(err)
+            if(err.response.status === 401){
+                setEditingCommentId(null);
+                localStorage.removeItem('Token');
+                userCont.setLoggedInUser(null);
+                alert("User session expired. Please login and try again.");
+            } else {
+                alert("Error occured! Please try after some time.");
+            }
         }
     }
 
     async function handleDeleteComment(e){
         try{
-            const res = await axios.delete(`http://localhost:3000/api/comment/${videoId}/${e}`);
+            const res = await axios.delete(`http://localhost:3000/api/comment/${videoId}/${e}`, {headers: {Authorization: `JWT ${localStorage.getItem('Token')}`} });
             if(res.status === 200)
             {
                 setNewComment(false);
                 setComment(res.data.data);
             }
         } catch(err){
-            console.error(err);
+            if(err.response.status === 401){
+                localStorage.removeItem('Token');
+                userCont.setLoggedInUser(null);
+                alert("User session expired. Please login and try again.");
+            } else {
+                alert("Error occured! Please try after some time.");
+            }
         }
     }
 
@@ -110,7 +130,9 @@ function Comment({ videoId, user, item, uploader }){
                             </div>
                         </div>    
                     }
-                    { user.userId !== uploader  && <input type="text" placeholder="Add a comment..." value={commentValue} className="relative w-[100%] outline-0 border-b-1 py-1 mb-4" onFocus={e => setAddComment(true)} onChange={e => handleComment(e)}></input>}
+                    {  user && !(comment?.find(c => c.userId === user?.userId)) && user?.userId !== uploader  && <input type="text" placeholder="Add a comment..." value={commentValue} className="relative w-[100%] outline-0 border-b-1 py-1 mb-4" onFocus={e => setAddComment(true)} onChange={e => handleComment(e)}></input>}
+                    { comment?.find(c => c.userId === user?.userId) && <span className='text-[14px] text-gray-500'>Your comment is added.</span> }
+                    { !user && <span className='py-2 text-gray-500'>Sign in to add a comment...</span>}
                     { newComment && <span className='text-green-700 pb-4 font-medium'>Commented added successfully!</span> }
                     { addComment && 
                         <div className="flex justify-between items-center">
@@ -133,20 +155,21 @@ function Comment({ videoId, user, item, uploader }){
                                         <span className='text-[14px] font-bold'>@{comment.userId}</span>
                                         <span className='pl-2 text-gray-500 text-[12px]'>{uploadDate(comment.updatedAt)}</span>
                                     </div>
-                                    { editingCommentId !== comment._id ? (<span className='text-[14px] w-[100%]'>{comment.text}</span>) : (<input type="text" value={modifyCommentValue} className='text-[14px] outline-blue-700 p-1' ref={inputRef} onChange={(e) => {handleSetEditComment(e)}} ></input>)}
+                                    { editingCommentId !== comment._id && <span className='text-[14px] w-[100%]'>{comment.text}</span> } 
+                                    { editingCommentId === comment._id && <input type="text" value={modifyCommentValue} className='text-[14px] outline-blue-700 p-1' ref={inputRef} onChange={(e) => {handleSetEditComment(e)}} ></input> }
                                     <div className="pt-3 flex justify-start items-center">
-                                        <button className="relative h-[100%] border-r border-gray-400 px-6 py-2 bg-gray-100 cursor-pointer hover:bg-gray-200 rounded-tl-3xl rounded-bl-3xl">Like</button>
-                                        <button className="relative h-[100%] px-4 py-2 bg-gray-100 cursor-pointer hover:bg-gray-200 rounded-tr-3xl rounded-br-3xl">Dislike</button>
+                                        { user && <button className="relative h-[100%] border-r border-gray-400 px-6 py-2 bg-gray-100 cursor-pointer hover:bg-gray-200 rounded-tl-3xl rounded-bl-3xl">Like</button>}
+                                        { user && <button className="relative h-[100%] px-4 py-2 bg-gray-100 cursor-pointer hover:bg-gray-200 rounded-tr-3xl rounded-br-3xl">Dislike</button>}
                                     </div>
                                 </div>
                                 <div className={`w-[10%] flex ${ editingCommentId? "flex-col" : "flex-row"} justify-center items-center gap-2`}>
-                                    { editingCommentId !== comment._id && user.userId === comment.userId && (
+                                    { editingCommentId !== comment._id && user?.userId === comment.userId && (
                                         <>
                                         <button className=' rounded-3xl px-4 py-1 cursor-pointer hover:bg-gray-200' onClick={()=>handleOpenModifyComment(comment._id, comment.text)}><img src={edit_img} className='h-[30px] w-[100%]'/></button>
                                         <button className=' rounded-3xl px-4 py-1 cursor-pointer hover:bg-gray-200' onClick={() => handleDeleteComment(comment._id)}><img src={del_img} className='h-[30px] w-[100%]'/></button>
                                         </>) 
                                     }
-                                    { editingCommentId === comment._id && (
+                                    { editingCommentId === comment._id && user?.userId === comment.userId && (
                                         <>
                                         <button className='rounded-3xl px-4 py-1 cursor-pointer bg-blue-600 text-white' onClick={() => handleModifyComment(comment._id)}>Modify</button> 
                                         <button className='border rounded-3xl px-4 py-1 cursor-pointer bg-gray-600 text-white' onClick={handleCloseModifyComment}>Cancel</button>

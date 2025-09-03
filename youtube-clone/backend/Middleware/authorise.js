@@ -9,18 +9,28 @@ function authorise(req, res, next){
        return res.status(401).json({message: "Authorization token missing."});
     }
 
-    const [ scheme, token ] = req.headers.authorization.split(' ');
+    const parts = req.headers.authorization.split(' ');
 
-    if( scheme !== 'JWT' || !token ){
+    if (parts.length !== 2 || parts[0] !== 'JWT') {
         return res.status(401).json({message: "Invalid JWT token format."});
     }
+
+    const token = parts[1];
 
     try{
         const decoded = jwt.verify( token, process.env.JWT_SECRET );
         req.user_id = decoded.userId;
         next();
     } catch(err){
-        return res.status(403).json({success: false, message: "Invalid token or expired token"});
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({ success: false, message: "Token has expired." });
+        }
+
+        if (err.name === 'JsonWebTokenError') {
+            return res.status(401).json({ success: false, message: "Invalid token." });
+        }
+
+        return res.status(500).json({ success: false, message: "Token verification failed." });
     }
 }
 

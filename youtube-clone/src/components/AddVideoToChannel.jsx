@@ -93,6 +93,7 @@ function AddVideoToChannel({add, cancel}){
             setErr("Video category not set!");
             return;
         }
+        console.log(vid, thumb, title, desc, cat)
         add({
             videoFile: vid,
             thumbFile: thumb,
