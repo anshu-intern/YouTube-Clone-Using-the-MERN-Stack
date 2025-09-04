@@ -7,42 +7,35 @@ import jwt from'jsonwebtoken';
 
 export async function registerUser(req, res){
     try{
-        const API = `${process.env.GSX2JSON}?id=${process.env.S_ID}&sheet=${process.env.S_NAME}`;
-        const response = await fetch(API);
+        const { username, email, password } = req.body;
+        const avatarFile = req.files?.['avatar']?.[0];
 
-        if(response.status != 200) return res.status(response.status).json({statusText: response.statusText});
+        const existingUser = await userModel.findOne({ $or: [{ email }, { username }] });
 
-        const resp = await response.json();
-        
-        const rows = resp?.rows || [];
-
-        for (const e of rows) {
-            try{
-                const { Email , Name, Password } = e ;
-          
-                if (!Email || !Name || !Password) continue;
-                const exists = await userModel.findOne({ $or : [ {email: Email}, {username: Name} ] });
-
-                if(!exists){
-                    const salt = await bcrypt.genSalt(10);
-                    const hashPwd = await bcrypt.hash(Password, salt);
-                    const newUser = new userModel({
-                        username : Name,
-                        email : Email,
-                        password : hashPwd
-                    });
-                    await newUser.save();
-                }
-            } catch(err){
-                console.error(`Error processing row for Email: ${e.Email}, Name: ${e.Name}`, err);
-            }  
+        if (existingUser){
+            if (existingUser.email === email) {
+                return res.status(409).json({ success : false, message : "Email already exists." });
+            } else {
+            return res.status(409).json({ success : false, message : "Username already exists." });
+            }
         }
 
-        res.status(201).json({success : true , message : "User registered successfully."});
+        const salt = await bcrypt.genSalt(10);
+        const hashPwd = await bcrypt.hash(password, salt);
+        
+        const newUser = new userModel({
+            username : username,
+            email : email,
+            password : hashPwd,
+            avatar: avatarFile?.path
+        });
+        
+        await newUser.save();
+
+        return res.status(201).json({ success : true , message : "User registered successfully."});
 
     } catch(err){
-        console.error(err);
-        res.status(500).json({success: false, message: "Internal server error."});
+        return res.status(500).json({success : false, message : "Internal server error."});
     }
 }
 
