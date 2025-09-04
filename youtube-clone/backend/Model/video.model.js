@@ -10,7 +10,9 @@ const commentSchema = new mongoose.Schema({
 const videoSchema = new mongoose.Schema({
     title           : { type : String, required : true },
     thumbnailUrl    : { type : String, required : true },
+    thumbnailUrl_id : { type : String, required : true },
     videoUrl        : { type : String, required : true },
+    videoUrl_id     : { type : String, required : true },
     description     : { type : String, required : true },
     category        : { type : String, default : null },
     channelId       : { type: mongoose.Schema.Types.ObjectId, ref: "Channel", required: true },

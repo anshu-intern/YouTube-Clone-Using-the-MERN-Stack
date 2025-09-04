@@ -5,10 +5,12 @@ dotenv.config();
 import express from 'express';
 import mongoose from 'mongoose';
 import routes from './Routes/index.js';
+import cors from 'cors';
 
 //define server
 const app = express();
-app.use(express.json());
+app.use(express.json());    // parse JSON bodies
+app.use(cors());            // enable cors
 
 // Establish a connection to the MongoDB database
 async function connectDB(){

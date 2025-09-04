@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { formatDistanceToNowStrict } from 'date-fns';
 import userContext from '../assets/utils/userContext';
@@ -16,7 +16,7 @@ function VideoPlayPage(){
     useEffect(()=>{
         async function fetchVideo(){
             try{
-                const vid = await axios.get(`http://localhost:3000/api/video/${video_id}`);
+                const vid = await axios.get(`/api/video/${video_id}`);
                 setVideo(vid.data.data);
             } catch(err){
                 console.error(err);
@@ -28,7 +28,7 @@ function VideoPlayPage(){
     useEffect(()=>{
         async function loadExtra() {
                 try{
-                    const resp = await axios.get("http://localhost:3000/api/video");
+                    const resp = await axios.get("/api/video");
                     setOtherVideos(resp.data.data);
                 } catch(err){
                     console.error(err);
@@ -51,9 +51,9 @@ function VideoPlayPage(){
 
     async function handleAddVideoLike(){
         try{
-            const resp = await axios.patch(`http://localhost:3000/api/video/like/${video_id}`, {} , { headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
+            const resp = await axios.patch(`/api/video/like/${video_id}`, {} , { headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
             if (resp.status === 200){
-                const userResp = await axios.get("http://localhost:3000/api/user/data", { headers: {Authorization: `JWT ${localStorage.getItem('Token')}`}} );
+                const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${localStorage.getItem('Token')}`}} );
                 setLoggedInUser(userResp.data.data);
             }
         } catch(err){
@@ -69,9 +69,9 @@ function VideoPlayPage(){
     }
     async function handleAddVideoDisLike(){
         try{
-            const resp = await axios.patch(`http://localhost:3000/api/video/dislike/${video_id}`, {} ,{ headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
+            const resp = await axios.patch(`/api/video/dislike/${video_id}`, {} ,{ headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
             if (resp.status === 200){
-                const userResp = await axios.get("http://localhost:3000/api/user/data", { headers: {Authorization: `JWT ${localStorage.getItem('Token')}`}} );
+                const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${localStorage.getItem('Token')}`}} );
                 setLoggedInUser(userResp.data.data);
             }
         } catch(err){
@@ -89,9 +89,9 @@ function VideoPlayPage(){
     async function handleChannelSubscribe(){
         try{
             const token = localStorage.getItem('Token');
-            const resp = await axios.patch(`http://localhost:3000/api/channel/subscribe/${video.channelId._id}`, {} , { headers: {Authorization: `JWT ${token}`}});
+            const resp = await axios.patch(`/api/channel/subscribe/${video.channelId._id}`, {} , { headers: {Authorization: `JWT ${token}`}});
             if (resp.status === 200){
-                const userResp = await axios.get("http://localhost:3000/api/user/data", { headers: {Authorization: `JWT ${token}`}} );
+                const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${token}`}} );
                 setLoggedInUser(userResp.data.data);
             }
         } catch(err){
@@ -109,9 +109,9 @@ function VideoPlayPage(){
     async function handleChannelUnsubscribe(){
          try{
             const token = localStorage.getItem('Token');
-            const resp = await axios.patch(`http://localhost:3000/api/channel/unsubscribe/${video.channelId._id}`, {} , { headers: {Authorization: `JWT ${token}`}});
+            const resp = await axios.patch(`/api/channel/unsubscribe/${video.channelId._id}`, {} , { headers: {Authorization: `JWT ${token}`}});
             if (resp.status === 200){
-                const userResp = await axios.get("http://localhost:3000/api/user/data", { headers: {Authorization: `JWT ${token}`}} );
+                const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${token}`}} );
                 setLoggedInUser(userResp.data.data);
             }
         } catch(err){

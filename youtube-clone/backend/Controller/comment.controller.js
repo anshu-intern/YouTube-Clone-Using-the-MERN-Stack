@@ -1,5 +1,6 @@
 import videoModel from "../Model/video.model.js";
 
+// Add comment to video by id.
 export async function addComment(req, res){
     try{
         const { videoId, text } = req.body;
@@ -11,21 +12,21 @@ export async function addComment(req, res){
         const video = await videoModel.findById(videoId);
 
         if (!video) {
-            return res.status(404).json({ message: "Video not found to add a comment." });
+            return res.status(404).json({ success: false , message: "Video not found to add a comment." });
         }
 
         video.comments.push(newComment);
 
         await video.save();
 
-        return res.status(201).json({ message: "Comment added successfully.", data: video.comments });
+        return res.status(201).json({ success: true , message: "Comment added successfully.", data: video.comments });
 
     } catch(err){
-        console.error(err);
-        return res.status(500).json({success: false, message: "Internal server error.", err: err});
+        return res.status(500).json({ success: false , message: "Internal server error.", error: err});
     }
 } 
 
+// Modify video comment by id.
 export async function modifyComment(req, res){
     try{
         const { video_id, comment_id } = req.params;
@@ -34,30 +35,30 @@ export async function modifyComment(req, res){
         const video = await videoModel.findById(video_id);
 
         if (!video) {
-            return res.status(404).json({ message: "Video not found for the comment" });
+            return res.status(404).json({ success: false , message: "Video not found for the comment" });
         }
 
         const comment = video.comments.find( c => c._id.toString() === comment_id );
 
         if (!comment) {
-            return res.status(404).json({ success: false, message: "Comment not found" });
+            return res.status(404).json({ success: false , message: "Comment not found" });
         }
 
         if( String(comment.userId) !== req.user_id){
-            return res.status(403).json({ success: false, message: "Current user not authorised to modify this comment." });
+            return res.status(403).json({ success: false , message: "Current user not authorised to modify this comment." });
         }
 
         comment.text = text;
 
         await video.save();
-        return res.status(200).json({ success: true, message: "Comment updated successfully", data: video.comments });
+        return res.status(200).json({ success: true , message: "Comment updated successfully", data: video.comments });
 
     } catch(err){
-        console.error(err);
-        return res.status(500).json({success: false, message: "Internal server error."});
+        return res.status(500).json({ success: false , message: "Internal server error."});
     }
 }
 
+// Delete video comment by id.
 export async function deleteComment(req, res){
     try{
         const { video_id , comment_id } = req.params; 
@@ -65,17 +66,17 @@ export async function deleteComment(req, res){
         const video = await videoModel.findById(video_id );
 
         if (!video) {
-            return res.status(404).json({ message: "Video not found for the comment" });
+            return res.status(404).json({ success: false , message: "Video not found for the comment" });
         }
 
         const comment = video.comments.find( c => c._id.toString() === comment_id );
 
         if (!comment) {
-            return res.status(404).json({ success: false, message: "Comment not found" });
+            return res.status(404).json({ success: false , message: "Comment not found" });
         }
     
         if( String(comment.userId) !== req.user_id){
-            return res.status(403).json({ success: false, message: "Current user not authorised to delete this comment." });
+            return res.status(403).json({ success: false , message: "Current user not authorised to delete this comment." });
         }
 
         const updatedVideo = await videoModel.findByIdAndUpdate(
@@ -85,13 +86,12 @@ export async function deleteComment(req, res){
         );
 
         if (!updatedVideo) {
-            return res.status(404).json({ message: "Video or comment not found" });
+            return res.status(404).json({ success: false , message: "Video or comment not found" });
         }
 
-        return res.status(200).json({ message: "Comment deleted successfully", data: updatedVideo.comments  });
+        return res.status(200).json({ success: true , message: "Comment deleted successfully", data: updatedVideo.comments  });
 
     } catch(err){
-        console.error(err);
-        return res.status(500).json({success: false, message: "Internal server error."});
+        return res.status(500).json({ success: false , message: "Internal server error."});
     }
 }

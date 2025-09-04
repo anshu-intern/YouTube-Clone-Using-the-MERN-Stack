@@ -40,7 +40,7 @@ function Comment({ videoId, user, item, uploader }){
                 videoId : videoId,
                 text : commentValue.trim()
             }
-            const res = await axios.post("http://localhost:3000/api/comment/", newComm, {headers: {Authorization: `JWT ${localStorage.getItem('Token')}`} });
+            const res = await axios.post("/api/comment/", newComm, {headers: {Authorization: `JWT ${localStorage.getItem('Token')}`} });
             if(res.status === 201)
             {
                 setComment(res.data.data);
@@ -76,7 +76,7 @@ function Comment({ videoId, user, item, uploader }){
 
     async function handleModifyComment(e){
         try{
-            const res = await axios.patch(`http://localhost:3000/api/comment/${videoId}/${e}`, { text: modifyCommentValue.trim() }, {headers: {Authorization: `JWT ${localStorage.getItem('Token')}`} });
+            const res = await axios.patch(`/api/comment/${videoId}/${e}`, { text: modifyCommentValue.trim() }, {headers: {Authorization: `JWT ${localStorage.getItem('Token')}`} });
             if (res.status === 200 )
             {
                 setModifyCommentValue(" ");
@@ -97,7 +97,7 @@ function Comment({ videoId, user, item, uploader }){
 
     async function handleDeleteComment(e){
         try{
-            const res = await axios.delete(`http://localhost:3000/api/comment/${videoId}/${e}`, {headers: {Authorization: `JWT ${localStorage.getItem('Token')}`} });
+            const res = await axios.delete(`/api/comment/${videoId}/${e}`, {headers: {Authorization: `JWT ${localStorage.getItem('Token')}`} });
             if(res.status === 200)
             {
                 setNewComment(false);

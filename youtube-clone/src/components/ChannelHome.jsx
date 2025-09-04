@@ -49,7 +49,7 @@ function ChannelHome(){
     useEffect(() => {
         async function loadChannel(){
             try{
-                const res = await axios.get(`http://localhost:3000/api/channel/${channel_id}`);
+                const res = await axios.get(`/api/channel/${channel_id}`);
                 if(res.status === 200){
                     setChannel(res.data.data);
                 }
@@ -101,7 +101,7 @@ function ChannelHome(){
             formData.append('category', data.category);
             formData.append('channelId', channel_id); 
             const token = localStorage.getItem('Token');
-            const resp = await axios.post(`http://localhost:3000/api/video/upload`, formData, { headers: {Authorization: `JWT ${token}`}} );
+            const resp = await axios.post(`/api/video/upload`, formData, { headers: {Authorization: `JWT ${token}`}} );
             if (resp.status === 201){
                 setAddVideo(false);
                 setUpdate(!update);
@@ -120,9 +120,9 @@ function ChannelHome(){
 
     async function handledeleteChannel(){
         try{
-            const resp = await axios.delete(`http://localhost:3000/api/channel/${channel_id}`,{ headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
+            const resp = await axios.delete(`/api/channel/${channel_id}`,{ headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
             if(resp.status === 200){
-                const userResp = await axios.get("http://localhost:3000/api/user/data", { headers: {Authorization: `JWT ${localStorage.getItem('Token')}`}} );
+                const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${localStorage.getItem('Token')}`}} );
                 user.setLoggedInUser(userResp.data.data);
                 alert("Channel deleted successfully!");
                 navigate("/");
@@ -154,7 +154,7 @@ function ChannelHome(){
                 formData.append("description", channelDesc);
             }
 
-            const resp = await axios.patch(`http://localhost:3000/api/channel/update/${channel_id}`, formData,{ headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
+            const resp = await axios.patch(`/api/channel/update/${channel_id}`, formData,{ headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
             if(resp.status === 200){
                 setShowSetPic(false);
                 setChannelPic(null);
@@ -247,7 +247,7 @@ function ChannelHome(){
     async function handleDeleteVideo(id){
         try{
             const token = localStorage.getItem('Token');
-            const resp = await axios.delete(`http://localhost:3000/api/video/delete/${id}`, { headers: {Authorization: `JWT ${token}`}} );
+            const resp = await axios.delete(`/api/video/delete/${id}`, { headers: {Authorization: `JWT ${token}`}} );
             if(resp.status === 200){
                 setUpdate(!update);
             }
@@ -270,7 +270,7 @@ function ChannelHome(){
                 formData.append(key, data[key]);
             }
             const token = localStorage.getItem('Token');
-            const resp = await axios.patch(`http://localhost:3000/api/video/update/${updateVideoId}`, formData , { headers: {Authorization: `JWT ${token}`}} );
+            const resp = await axios.patch(`/api/video/update/${updateVideoId}`, formData , { headers: {Authorization: `JWT ${token}`}} );
             if(resp.status === 200){
                 setVideoThumbModal(false);
                 setVideoDescModal(false); 
@@ -316,9 +316,9 @@ function ChannelHome(){
     async function handleChannelSubscribe(){
         try{
             const token = localStorage.getItem('Token');
-            const resp = await axios.patch(`http://localhost:3000/api/channel/subscribe/${channel_id}`, {} , { headers: {Authorization: `JWT ${token}`}});
+            const resp = await axios.patch(`/api/channel/subscribe/${channel_id}`, {} , { headers: {Authorization: `JWT ${token}`}});
             if (resp.status === 200){
-                const userResp = await axios.get("http://localhost:3000/api/user/data", { headers: {Authorization: `JWT ${token}`}} );
+                const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${token}`}} );
                 user.setLoggedInUser(userResp.data.data);
             }
         } catch(err){
@@ -335,9 +335,9 @@ function ChannelHome(){
     async function handleChannelUnsubscribe(){
          try{
             const token = localStorage.getItem('Token');
-            const resp = await axios.patch(`http://localhost:3000/api/channel/unsubscribe/${channel_id}`, {} , { headers: {Authorization: `JWT ${token}`}});
+            const resp = await axios.patch(`/api/channel/unsubscribe/${channel_id}`, {} , { headers: {Authorization: `JWT ${token}`}});
             if (resp.status === 200){
-                const userResp = await axios.get("http://localhost:3000/api/user/data", { headers: {Authorization: `JWT ${token}`}} );
+                const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${token}`}} );
                 user.setLoggedInUser(userResp.data.data);
             }
         } catch(err){
@@ -357,11 +357,11 @@ function ChannelHome(){
             <article className="relative flex flex-col gap-3 justify-center items-center w-[100%]">
                 { channel.channelBanner && 
                     <div className='relative w-[100%] max-w-[1300px] rounded-2xl overflow-hidden p-2 pb-4'>
-                        <img src={`../../backend/${channel.channelBanner}`} alt='banner' className='relative h-[180px] w-[100%] object-cover'/>
+                        <img src={channel.channelBanner} alt='banner' className='relative h-[180px] w-[100%] object-cover'/>
                     </div>
                 }
                 <div className='relative w-[100%] max-w-[1300px] flex flex-row gap-4 p-2'>
-                    { channel.channelImage && <img src={`../../backend/${channel.channelImage}`} alt='' className='relative h-[180px] w-[180px] rounded-full overflow-hidden'/>}
+                    { channel.channelImage && <img src={channel.channelImage} alt='' className='relative h-[180px] w-[180px] rounded-full overflow-hidden'/>}
                     { !channel.channelImage && <div className='relative group'>
                         <span className='relative flex justify-center items-center h-[180px] w-[180px] rounded-full overflow-hidden bg-green-800 text-white text-[66px] font-bold leading-none text-center'>
                             {channel.channelName?.charAt(0).toUpperCase()}
@@ -547,7 +547,7 @@ function ChannelHome(){
                             return( 
                             <div key={vid._id} className='relative flex flex-col justify-start items-start gap-0 p-1 h-[340px] w-[30%] '>
                                 <Link to={`/watch/${vid._id}`} className='w-[100%] cursor-pointer'>
-                                <img src={`../../backend/${vid.thumbnailUrl}`} alt="video" className='relative h-[200px] w-[100%] rounded-xl object-cover pb-1'/>
+                                <img src={vid.thumbnailUrl} alt="video" className='relative h-[200px] w-[100%] rounded-xl object-cover pb-1'/>
                                 </Link>
                                 <div className='flex flex-row justify-between items-start w-[100%]'>
                                     <div className='flex flex-col'>

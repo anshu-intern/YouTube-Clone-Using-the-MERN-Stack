@@ -1,6 +1,6 @@
 import express from 'express';
 import { addChannel, getChannelById, deleteChannel, modifyChannelDetailsById, subscribeToChannel, unsubscribeToChannel } from '../Controller/channel.controller.js';
-import { uploadFields } from '../Middleware/channel.multer.js';
+import { uploadFields } from '../Middleware/storage.multer.js';
 import authorise from '../Middleware/authorise.js';
 
 const router = express.Router();

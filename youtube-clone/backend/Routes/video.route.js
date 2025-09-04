@@ -1,8 +1,7 @@
 import express from 'express';
 import { getVideo, getVideoById, addVideo, deleteVideoById, updateVideoById, toggleAddVideoLike, toggleAddVideoDisLike } from '../Controller/video.controller.js';
 import authorise from '../Middleware/authorise.js';
-import { uploadFields } from '../Middleware/video.multer.js';
-
+import { uploadFields } from '../Middleware/storage.multer.js';
 
 const router = express.Router();
 

@@ -1,20 +1,26 @@
-import fs from 'fs';
-import path from "path";
 import channelModel from "../Model/channel.model.js";
 import userModel from "../Model/user.model.js";
 import videoModel from "../Model/video.model.js";
+import { uploadCloud, deleteFromCloudinary } from '../Middleware/storage.cloudinary.js';
 
+// Add chennel for user.
 export async function addChannel(req, res){
     try{
         const { channelName, channelHandle } = req.body;
-        const { channelImage } = req.files;
-        const image = channelImage && channelImage.length > 0 ? channelImage[0].path : null;
+        const channelImageFile = req.files?.['channelImage']?.[0];
+        let result = null;
+
+        if (channelImageFile){
+            const publicId = `${Date.now()}-${channelImageFile.originalname.split('.')[0]}`;
+            result = await uploadCloud(channelImageFile.buffer, publicId, 'channel_Images');
+        }
 
         const newChannel = new channelModel({
             channelName: channelName ,
             channelHandle: channelHandle,
             owner_id: req.user_id,
-            channelImage: image
+            channelImage: result?.secure_url || null,
+            channelImage_id : result?.public_id || null
         });
 
         await newChannel.save();
@@ -22,11 +28,11 @@ export async function addChannel(req, res){
         
         return res.status(201).json({success : true , message : "Channel created successfully.", channelId: newChannel._id});
     } catch(err){
-        console.error(err);
         return res.status(500).json({success: false, message: "Internal server error." , err: err});
     }
 }
 
+// Get channel details by id.
 export async function getChannelById(req, res){
     try{
         const { channel_id } = req.params;
@@ -43,11 +49,11 @@ export async function getChannelById(req, res){
         return res.status(200).json({ success: true, data: channel});
 
     } catch(err){
-        console.error(err);
         return res.status(500).json({success: false, message: "Internal server error." , err: err});
     }
 }
 
+// Delete channel by id.
 export async function deleteChannel(req, res){
     try{
         const { channel_id } = req.params;
@@ -64,31 +70,33 @@ export async function deleteChannel(req, res){
 
         const videos = await videoModel.find({ channelId: channel_id });
 
-        const unlinkPromises = [];
+        await Promise.all(
+            videos.map(async (video) => {
+                try {
+                    if (video.videoUrl_id) {
+                        await deleteFromCloudinary(video.videoUrl_id);
+                    }
 
-        for (const video of videos) {
-            if (video.videoUrl) { 
-                const p = fs.promises.unlink(path.resolve(video.videoUrl)).catch( err =>  {console.error(`Failed to delete video file: ${video.videoUrl}`, err)} );
-                unlinkPromises.push(p);
+                    if (video.thumbnailUrl_id) {
+                        await deleteFromCloudinary(video.thumbnailUrl_id);
+                    }
+                } catch (err) {
+                    console.warn(`Failed to delete media for video ${video._id}:`, err.message);
+                }
+            })
+        );
+
+        try{
+            if (channel.channelBanner){
+                await deleteFromCloudinary(channel.channelBanner_id);
             }
 
-            if (video.thumbnailUrl) {
-                const p = fs.promises.unlink(path.resolve(video.thumbnailUrl)).catch( err =>  {console.error(`Failed to delete thumbnail file: ${video.thumbnailUrl}`, err)} );
-                unlinkPromises.push(p);
+            if (channel.channelImage){
+                await deleteFromCloudinary(channel.channelImage_id)
             }
+        } catch(err){
+            console.warn(`Failed to delete channel images:`, err.message);
         }
-
-        if (channel.channelBanner) {
-            const p = fs.promises.unlink(path.resolve(channel.channelBanner)).catch(err =>  {console.error(`Failed to delete banner file: ${channel.channelBanner}`, err)});
-            unlinkPromises.push(p);
-        }
-
-        if (channel.channelImage) {
-            const p = fs.promises.unlink(path.resolve(channel.channelImage)).catch(err =>  {console.error(`Failed to delete channel image file: ${channel.channelImage}`, err)});
-            unlinkPromises.push(p);
-        }
-
-        await Promise.all(unlinkPromises);
 
         await userModel.findByIdAndUpdate(req.user_id, { $pull: { channels: channel_id } });
         await videoModel.deleteMany({ channelId: channel_id });
@@ -97,17 +105,18 @@ export async function deleteChannel(req, res){
         return res.status(200).json({ success: true,  message: "Channel deleted successfully." });
 
     } catch(err){
-        console.error(err);
         return res.status(500).json({success: false, message: "Internal server error." , err: err});
     }
 }
 
+// Modify channel details by id.
 export async function modifyChannelDetailsById(req, res){
     try{
         const { channel_id } = req.params;
         const { description } = req.body;
         const banner = req.files?.['channelBanner']?.[0];
         const image = req.files?.['channelImage']?.[0];
+        let result = null;
 
         if ( !description && !banner && !image ){
             return res.status(400).json({success: false , message: "No input provided for update."});
@@ -130,23 +139,29 @@ export async function modifyChannelDetailsById(req, res){
         if (banner){
             if (channel.channelBanner){
                 try{
-                    await fs.promises.unlink(path.resolve(channel.channelBanner));
+                    await deleteFromCloudinary(channel.channelBanner_id);
                 } catch(err){
-                    console.error(err);
+                    console.warn(`Failed to delete banner for channel ${channel._id}:`, err.message);
                 }
             }
-            channel.channelBanner = banner.path;
+            const publicId = `${Date.now()}-${banner.originalname.split('.')[0]}`;
+            result = await uploadCloud(banner.buffer, publicId, 'channel_banners');
+            channel.channelBanner = result?.secure_url || null;
+            channel.channelBanner_id = result?.public_id || null;
         }
 
         if (image){
             if (channel.channelImage){
                 try{
-                    await fs.promises.unlink(path.resolve(channel.channelImage));
+                    await deleteFromCloudinary(channel.channelImage_id);
                 } catch(err){
-                    console.error(err);
+                    console.warn(`Failed to delete image for channel ${channel._id}:`, err.message);
                 }
             }
-            channel.channelImage = image.path;
+            const publicId = `${Date.now()}-${image.originalname.split('.')[0]}`;
+            result = await uploadCloud(image.buffer, publicId, 'channel_images');
+            channel.channelImage = result?.secure_url || null;
+            channel.channelImage_id = result?.public_id || null;
         }
 
         await channel.save();
@@ -154,11 +169,11 @@ export async function modifyChannelDetailsById(req, res){
         return res.status(200).json({ success: true,  message: "Channel details updated successfully." });
 
     } catch(err){
-        console.error(err);
         return res.status(500).json({success: false, message: "Internal server error." , err: err});
     }
 }
 
+// Subscribe user to channel.
 export async function subscribeToChannel(req, res){
     try{
         const { channel_id } = req.params;
@@ -194,11 +209,11 @@ export async function subscribeToChannel(req, res){
         return res.status(200).json({ success: true,  message: "User subscribed to channel successfully." });
 
     } catch(err){
-        console.error(err);
         return res.status(500).json({success: false, message: "Internal server error." , err: err});
     }
 }
 
+// Unsubscribe user from channel.
 export async function unsubscribeToChannel(req, res){
     try{
         const { channel_id } = req.params;
@@ -230,7 +245,6 @@ export async function unsubscribeToChannel(req, res){
         return res.status(200).json({ success: true,  message: "User un-subscribed from channel successfully." });
 
     } catch(err){
-        console.error(err);
         return res.status(500).json({success: false, message: "Internal server error." , err: err});
     }
 }

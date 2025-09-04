@@ -21,7 +21,7 @@ function Header({toggleSideBar}){
         const token = localStorage.getItem('Token');
         async function fetchUserData(){
             try{
-                const resp = await axios.get("http://localhost:3000/api/user/data", { headers: {Authorization: `JWT ${token}`}} );
+                const resp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${token}`}} );
                 user.setLoggedInUser(resp.data.data);
             } catch(err){
                 if(err.response.status === 401){
@@ -80,9 +80,9 @@ function Header({toggleSideBar}){
                 formData.append('channelImage', e.channelPic);
             }
             const token = localStorage.getItem('Token');
-            const res = await axios.post("http://localhost:3000/api/channel/", formData, { headers: {Authorization: `JWT ${token}`} });
+            const res = await axios.post("/api/channel/", formData, { headers: {Authorization: `JWT ${token}`} });
             if (res.status === 201){
-                const userResp = await axios.get("http://localhost:3000/api/user/data", { headers: {Authorization: `JWT ${token}`} });
+                const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${token}`} });
                 user.setLoggedInUser(userResp.data.data);
                 setShowCreateChannel(false);
                 navigate(`/channel/${res.data.channelId}`);
@@ -166,12 +166,12 @@ function Header({toggleSideBar}){
                 {
                     user.loggedInUser ? (
                         <div ref={userdropDownRef} className='relative h-[40px] rounded-full w-[40px] font-bold bg-green-900 text-white flex justify-center items-center cursor-pointer z-10' onClick={handleUserIcon}>
-                            { user.loggedInUser.avatar ? (<img src={`../../backend/${user.loggedInUser.avatar}`} alt="user"/>) : (<span>{user.loggedInUser.username?.charAt(0).toUpperCase()}</span>)}
+                            { user.loggedInUser.avatar ? (<img src={user.loggedInUser.avatar} alt="user" className='rounded-full'/>) : (<span>{user.loggedInUser.username?.charAt(0).toUpperCase()}</span>)}
                             { userMenu && 
                                 <div className='cursor-text py-2 absolute h-[auto] w-[280px] flex flex-col justify-start items-center gap-0 border border-gray-200 shadow-2xl rounded-xl top-10 right-0 font-normal bg-white shadow-xl text-black'>
                                     <div className='flex flex-row justify-center items-start gap-4 w-[100%] border-b border-gray-300 pb-4'>
                                         <div className='ml-4 relative h-[40px] rounded-full w-[50px] bg-green-900 text-white flex justify-center items-center'>
-                                            { user.loggedInUser.avatar ? (<img src={`../../backend/${user.loggedInUser.avatar}`} alt="user" className='w-[100%] h-[100%]'/>) : (<span>{user.loggedInUser.username?.charAt(0).toUpperCase()}</span>)}
+                                            { user.loggedInUser.avatar ? (<img src={user.loggedInUser.avatar} alt="user" className='w-[100%] h-[100%] rounded-full'/>) : (<span>{user.loggedInUser.username?.charAt(0).toUpperCase()}</span>)}
                                         </div>
                                         <div className='flex flex-col w-[100%]'>
                                             <span className='w-[100%]  text-[16px] font-medium'>{user.loggedInUser.username}</span>

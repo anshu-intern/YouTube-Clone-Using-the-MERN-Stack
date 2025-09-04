@@ -6,13 +6,13 @@ import jwt from "jsonwebtoken";
 function authorise(req, res, next){
 
     if(!req.headers.authorization){
-       return res.status(401).json({message: "Authorization token missing."});
+       return res.status(401).json({success: false, message: "Authorization token missing."});
     }
 
     const parts = req.headers.authorization.split(' ');
 
     if (parts.length !== 2 || parts[0] !== 'JWT') {
-        return res.status(401).json({message: "Invalid JWT token format."});
+        return res.status(401).json({success: false, message: "Invalid JWT token format."});
     }
 
     const token = parts[1];

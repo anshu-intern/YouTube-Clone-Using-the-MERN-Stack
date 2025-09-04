@@ -17,7 +17,7 @@ function MainBody(){
     useEffect(() => {
         async function loadVideos() {
             try{
-                const resp = await axios.get("http://localhost:3000/api/video/");
+                const resp = await axios.get("/api/video/");
                 setVideos(resp.data.data);
                 setFilteredVid(resp.data.data);
                 setCategory( [...new Set( resp.data.data.map( i => i.category).filter(cat => cat) )] );

@@ -40,7 +40,7 @@ function Login(){
     async function handleNext(){
         try{
             setLoading(true);
-            const resp = await axios.get(`http://localhost:3000/api/user/user/${UserName}`);
+            const resp = await axios.get(`/api/user/user/${UserName}`);
             setUserNameErr(null);
             setUserName(resp.data.user);
             setNext(true);
@@ -55,7 +55,7 @@ function Login(){
     async function handleLogin(){
         try{
             setLoading(true);
-            const resp = await axios.post(`http://localhost:3000/api/user/login`,{ username: UserName , password: Password });
+            const resp = await axios.post(`/api/user/login`,{ username: UserName , password: Password });
             setPasswordErr(null);
             localStorage.setItem('Token', resp.data.accessToken);
             const decoded = jwtDecode(resp.data.accessToken);

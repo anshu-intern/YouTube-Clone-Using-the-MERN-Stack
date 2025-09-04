@@ -44,7 +44,7 @@ function RegisterUser(){
             if (avatar){
                 formData.append("avatar", avatar);
             }
-            const resp = await axios.post("http://localhost:3000/api/user/register", formData);
+            const resp = await axios.post("/api/user/register", formData);
             if(resp.status === 201){
                 setUserName('');
                 setEmail('');
@@ -118,7 +118,7 @@ function RegisterUser(){
                     <div className='flex flex-col justify-center items-center cursor-pointer hover:bg-blue-100 pt-3 pb-3 px-8 rounded-xl' onClick={()=> avatarRef.current.click()}>
                         { !avatarPreview && <img src={userProfilePic} alt="image" className='h-[150px] w-[150px] rounded-full'/> }
                         { avatarPreview && <img src={avatarPreview} alt="image" className='h-[150px] w-[150px] rounded-full'/> }
-                        <input ref={avatarRef} type="file" className='hidden' onChange={(e) => handleAvatar(e)}/>
+                        <input ref={avatarRef} type="file" accept='image/*' className='hidden' onChange={(e) => handleAvatar(e)}/>
                         { avatar?.name ? <div className='text-gray-500 h-[24px] text-[14px] p-2'>{avatar?.name}</div> : <div className='text-gray-500 h-[24px] text-[14px] p-2'>Set an avatar</div> }
                     </div>
                     

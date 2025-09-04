@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
     email               : { type : String, required : true, unique: true },
     password            : { type : String, required : true },
     avatar              : { type : String, default : null },
+    avatar_id           : { type : String, default : null },
     channels            : { type : [ {type: mongoose.Schema.Types.ObjectId, ref: "Channel"} ], default : [] },
     likedVideos         : { type : [ {type: mongoose.Schema.Types.ObjectId, ref: "Video"} ], default : [] },
     dislikedVideos      : { type : [ {type: mongoose.Schema.Types.ObjectId, ref: "Video"} ], default : [] },
