@@ -31,8 +31,8 @@ function RegisterUser(){
             setEmailErr("Invalid email format.");
             return
         }
-        if (password.trim().length === 0 ){
-            setPasswordErr("Password not entered");
+        if ( !password || password.trim().length < 6 ){
+            setPasswordErr("Password must be at least 6 characters long.");
             return
         }
         setLoading(true);
