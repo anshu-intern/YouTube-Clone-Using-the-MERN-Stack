@@ -2,10 +2,10 @@ import MainVideoCard from "./MainVideoCard";
 import { useContext, useEffect, useState } from "react";
 import userContext from "../assets/utils/userContext";
 import axios from 'axios';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function MainBody(){
-    const {loggedInUser} = useContext(userContext);
+    const user = useContext(userContext);
     const [ videos , setVideos ] = useState([]);
     const [ category, setCategory ] = useState([]);
     const [ filteredVid, setFilteredVid ] = useState([]);
@@ -13,19 +13,23 @@ function MainBody(){
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const searchText = queryParams.get('q');
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function loadVideos() {
             try{
+                user.setLoad(true);
                 const resp = await axios.get("/api/video/");
                 setVideos(resp.data.data);
                 setFilteredVid(resp.data.data);
                 setCategory( [...new Set( resp.data.data.map( i => i.category).filter(cat => cat) )] );
+                user.setLoad(false);
             } catch(err){
-                console.error(err);
+                navigate("/error");
             }  
         }    
         loadVideos();
+        user.setLoad(false);
     }, []);
 
     useEffect(() => {

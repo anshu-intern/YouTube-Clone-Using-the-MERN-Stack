@@ -46,12 +46,12 @@ export async function addVideo(req, res){
 
         if (videoUrl){
             const publicId = `${Date.now()}-${videoUrl.originalname.split('.')[0]}`;
-            video_result = await uploadCloud(videoUrl.buffer, publicId, 'videos');
+            video_result = await uploadCloud(videoUrl.buffer, publicId, 'videos', 'video');
         }
 
         if (thumbUrl){
             const publicId = `${Date.now()}-${thumbUrl.originalname.split('.')[0]}`;
-            thumb_result = await uploadCloud(thumbUrl.buffer, publicId, 'video_thumbs');
+            thumb_result = await uploadCloud(thumbUrl.buffer, publicId, 'video_thumbs' , 'image');
         }
 
         const newVideo = new videoModel({
@@ -159,7 +159,7 @@ export async function updateVideoById(req, res){
                 }
             }
             const publicId = `${Date.now()}-${thumbnailFile.originalname.split('.')[0]}`;
-            result = await uploadCloud(thumbnailFile.buffer, publicId, 'video_thumbs');
+            result = await uploadCloud(thumbnailFile.buffer, publicId, 'video_thumbs','image');
             video.thumbnailUrl = result?.secure_url || null;
             video.thumbnailUrl_id = result?.public_id || null;
         }

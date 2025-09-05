@@ -49,15 +49,18 @@ function ChannelHome(){
     useEffect(() => {
         async function loadChannel(){
             try{
+                user.setLoad(true);
                 const res = await axios.get(`/api/channel/${channel_id}`);
                 if(res.status === 200){
                     setChannel(res.data.data);
+                    user.setLoad(false);
                 }
             } catch(err){
                 navigate(`/error`, { state: { url: window.location.pathname} });
             }
         }
         loadChannel();
+        user.setLoad(false);
     }, [ update, channel_id, user.loggedInUser]);
 
     useEffect(() => {
@@ -101,10 +104,12 @@ function ChannelHome(){
             formData.append('category', data.category);
             formData.append('channelId', channel_id); 
             const token = localStorage.getItem('Token');
+            user.setLoad(true);
             const resp = await axios.post(`/api/video/upload`, formData, { headers: {Authorization: `JWT ${token}`}} );
             if (resp.status === 201){
                 setAddVideo(false);
                 setUpdate(!update);
+                user.setLoad(false);
             }
         } catch(err){
             if(err.response.status === 401){
@@ -115,16 +120,19 @@ function ChannelHome(){
             } else {
                 alert("Error occured! Please try after some time.");
             }
+            user.setLoad(false);
         }
     }
 
     async function handledeleteChannel(){
         try{
+            user.setLoad(true);
             const resp = await axios.delete(`/api/channel/${channel_id}`,{ headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
             if(resp.status === 200){
                 const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${localStorage.getItem('Token')}`}} );
                 user.setLoggedInUser(userResp.data.data);
                 alert("Channel deleted successfully!");
+                user.setLoad(false);
                 navigate("/");
             }
         } catch(err){
@@ -136,6 +144,7 @@ function ChannelHome(){
             } else {
                 alert("Error occured! Please try after some time.");
             }
+            user.setLoad(false);
         }
     }
 
@@ -153,7 +162,7 @@ function ChannelHome(){
             if(channelDesc){
                 formData.append("description", channelDesc);
             }
-
+            user.setLoad(true);
             const resp = await axios.patch(`/api/channel/update/${channel_id}`, formData,{ headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
             if(resp.status === 200){
                 setShowSetPic(false);
@@ -168,6 +177,7 @@ function ChannelHome(){
                 setShowUpdateDesc(false);
                 setShowUpdatePic(false);
                 setUpdate(!update);
+                user.setLoad(false);
             }
         
         } catch(err){
@@ -189,6 +199,7 @@ function ChannelHome(){
             } else {
                 alert("Error occured! Please try after some time.");
             }
+            user.setLoad(false);
         }
     }
 
@@ -246,10 +257,12 @@ function ChannelHome(){
 
     async function handleDeleteVideo(id){
         try{
+            user.setLoad(true);
             const token = localStorage.getItem('Token');
             const resp = await axios.delete(`/api/video/delete/${id}`, { headers: {Authorization: `JWT ${token}`}} );
             if(resp.status === 200){
                 setUpdate(!update);
+                user.setLoad(false);
             }
         } catch(err){
             if(err.response.status === 401){
@@ -260,6 +273,7 @@ function ChannelHome(){
             } else {
                 alert("Error occured! Please try after some time.");
             }
+            user.setLoad(false);
         }
     }
 
@@ -269,6 +283,7 @@ function ChannelHome(){
             for (const key in data){
                 formData.append(key, data[key]);
             }
+            user.setLoad(true);
             const token = localStorage.getItem('Token');
             const resp = await axios.patch(`/api/video/update/${updateVideoId}`, formData , { headers: {Authorization: `JWT ${token}`}} );
             if(resp.status === 200){
@@ -282,6 +297,7 @@ function ChannelHome(){
                 setVideoThumb(null);
                 setVideoThumbPreview(null);
                 setUpdate(!update);
+                user.setLoad(false);
             }
         } catch(err){
             if(err.response.status === 401){
@@ -300,6 +316,7 @@ function ChannelHome(){
             } else {
                 alert("Error occured! Please try after some time.");
             }
+            user.setLoad(false);
         }
     }
 

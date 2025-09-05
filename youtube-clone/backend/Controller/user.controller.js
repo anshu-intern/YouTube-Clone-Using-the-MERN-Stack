@@ -25,7 +25,7 @@ export async function registerUser(req, res){
 
         if (avatarFile){
             const publicId = `${Date.now()}-${avatarFile.originalname.split('.')[0]}`;
-            result = await uploadCloud(avatarFile.buffer, publicId, 'avatars');
+            result = await uploadCloud(avatarFile.buffer, publicId, 'avatars','image');
         } 
 
         const salt = await bcrypt.genSalt(10);

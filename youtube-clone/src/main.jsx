@@ -7,7 +7,6 @@ import Login from './components/Login.jsx'
 import MainBody from './components/MainBody.jsx'
 import VideoPlayerPage from './components/VideoPlayPage.jsx'
 import ChannelHome from './components/ChannelHome.jsx'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
 import RegisterUser from './components/RegisterUser.jsx'
 import userContext from './assets/utils/userContext';
 import { jwtDecode } from 'jwt-decode';
@@ -24,7 +23,6 @@ const appRoute = createBrowserRouter([
       },
       {
         path: "channel/:channel_id",
-        //element: <ProtectedRoute><ChannelHome/></ProtectedRoute>,
         element: <ChannelHome/>
       },
       {
@@ -35,17 +33,17 @@ const appRoute = createBrowserRouter([
     errorElement: <Error/>
   },
   {
-    path: "login",
+    path: "/login",
     element: <Login/>,
     errorElement: <Error/>
   },
   {
-    path: "register",
+    path: "/register",
     element: <RegisterUser/>,
     errorElement: <Error/>
   },
   {
-    path: "error",
+    path: "/error",
     element: <Error/>
   }
 ]);
@@ -69,7 +67,7 @@ function Root() {
   }, []);
 
   return (
-    <userContext.Provider value={{loggedInUser : logInUser, setLoggedInUser : setLogInUser, loading}}>
+    <userContext.Provider value={{loggedInUser : logInUser, setLoggedInUser : setLogInUser, load: loading, setLoad: setLoading }}>
       <RouterProvider router={appRoute} />
     </userContext.Provider>
   );

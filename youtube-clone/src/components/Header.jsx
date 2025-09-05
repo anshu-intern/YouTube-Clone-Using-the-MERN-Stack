@@ -9,7 +9,6 @@ import axios from 'axios';
 
 function Header({toggleSideBar}){
     const user = useContext(userContext);
-    const [loading, setLoading] = useState(false);
     const [userMenu , setUserMenu] = useState(false);
     const [showCreateChannel, setShowCreateChannel] = useState(false);
     const navigate = useNavigate();
@@ -21,8 +20,10 @@ function Header({toggleSideBar}){
         const token = localStorage.getItem('Token');
         async function fetchUserData(){
             try{
+                user.setLoad(true);
                 const resp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${token}`}} );
                 user.setLoggedInUser(resp.data.data);
+                user.setLoad(false);
             } catch(err){
                 if(err.response.status === 401){
                     localStorage.removeItem('Token');
@@ -31,11 +32,13 @@ function Header({toggleSideBar}){
                 } else {
                     alert("Error occured! Please try after some time.");
                 }
+                user.setLoad(false);
             }
         }
         if(token){
             fetchUserData();
         }
+        user.setLoad(false);
     }, []);
 
     useEffect(() => {
@@ -54,8 +57,8 @@ function Header({toggleSideBar}){
 
 
     function handleSignIn(){
-        setLoading(true);
-        setTimeout(() => navigate("/login"),2000)
+        user.setLoad(true);
+        setTimeout(() => navigate("/login"),1000)
     }
 
     function handleUserIcon(){
@@ -80,11 +83,13 @@ function Header({toggleSideBar}){
                 formData.append('channelImage', e.channelPic);
             }
             const token = localStorage.getItem('Token');
+            user.setLoad(true);
             const res = await axios.post("/api/channel/", formData, { headers: {Authorization: `JWT ${token}`} });
             if (res.status === 201){
                 const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${token}`} });
                 user.setLoggedInUser(userResp.data.data);
                 setShowCreateChannel(false);
+                user.setLoad(false);
                 navigate(`/channel/${res.data.channelId}`);
             }
         } catch(err){
@@ -95,6 +100,7 @@ function Header({toggleSideBar}){
             } else {
                 alert("Error occured! Please try after some time.");
             }
+            user.setLoad(false);
         }
     }
 
@@ -103,8 +109,10 @@ function Header({toggleSideBar}){
     }
 
     function handleSignOut(){
+        user.setLoad(true);
         localStorage.removeItem('Token');
         user.setLoggedInUser(null);
+        user.setLoad(false);
         setTimeout(() => { navigate("/") });
     }
 
@@ -122,9 +130,10 @@ function Header({toggleSideBar}){
     return(
         <>
         {
-            loading && 
-            <div className='relative z-20'>
+            user.load && 
+            <div className='relative z-50'>
                 <span className='absolute top-0 left-0 w-[100%] h-[4px] bg-gradient-to-r from-blue-500 via-green-400 to-red-500 transition-all duration-500'></span>
+                <div className="absolute top-1 h-[100vh] w-[100vw] bg-black opacity-30 z-50 border-1">fedde</div>
             </div>
         }
         {

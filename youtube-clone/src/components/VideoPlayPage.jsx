@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -11,30 +11,38 @@ function VideoPlayPage(){
     const { video_id } = useParams();
     const [ video, setVideo ] = useState({});
     const [ otherVideos, setOtherVideos] = useState([]);
-    const { loggedInUser, setLoggedInUser } = useContext(userContext);
+    const { loggedInUser, setLoggedInUser, setLoad } = useContext(userContext);
+    const navigate = useNavigate();
 
     useEffect(()=>{
         async function fetchVideo(){
             try{
+                setLoad(true);
                 const vid = await axios.get(`/api/video/${video_id}`);
                 setVideo(vid.data.data);
             } catch(err){
-                console.error(err);
+                navigate("/error");
+                setLoad(false);
             }
         }
         fetchVideo();
+        setLoad(false);
     }, [video_id, loggedInUser]);
 
     useEffect(()=>{
         async function loadExtra() {
                 try{
+                    setLoad(true);
                     const resp = await axios.get("/api/video");
                     setOtherVideos(resp.data.data);
+                    setLoad(false);
                 } catch(err){
                     console.error(err);
+                    setLoad(false);
                 }   
             }
             loadExtra();
+            setLoad(false);
     }, [video_id, loggedInUser]);
 
     function formatViewsIntl(views) {

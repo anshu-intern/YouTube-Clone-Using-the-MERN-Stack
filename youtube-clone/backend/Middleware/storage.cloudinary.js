@@ -9,10 +9,11 @@ cloudinary.v2.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export function uploadCloud(buffer, publicId = null, folder = 'default'){
+export function uploadCloud(buffer, publicId = null, folder = 'default', resource ){
     return new Promise((resolve, reject) => {
         const stream = cloudinary.v2.uploader.upload_stream(
             {
+                resource_type: resource, 
                 folder: folder,
                 public_id: publicId,
             },

@@ -24,7 +24,7 @@ function Login(){
 
     function handleCreateAccount(){
         setLoading(true)
-        setTimeout(() => navigate("/register"), 2000);
+        navigate("/register");
     }
 
     function handleUserNameInput(e){
@@ -46,6 +46,9 @@ function Login(){
             setNext(true);
         } catch(err){
             setUserNameErr(err.response.data.message)
+            if(err.status === 500){
+                alert(err.message);
+            }
             setNext(false);
         } finally{
             setLoading(false);
@@ -62,6 +65,9 @@ function Login(){
             setLoggedInUser(decoded);
         } catch(err){
             setPasswordErr(err.response.data.message);
+            if(err.status === 500){
+                alert(err.message);
+            }
         } finally{
             setLoading(false);
         }

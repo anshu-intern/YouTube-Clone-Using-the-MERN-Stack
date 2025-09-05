@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function RegisterUser(){
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [ userName, setUserName ] = useState('');
     const [ userNameErr, setUserNameErr ] = useState(null);
     const [ email, setEmail ] = useState('');
@@ -61,7 +61,7 @@ function RegisterUser(){
                     setUserNameErr(err.response.data.message);
                 }
             } else{
-                alert("User registration failed. Please try after some time.");
+                alert(`User registration failed. Please try after some time. Error - ${err.response.data.message}`);
             }
              setLoading(false);
         }
@@ -69,12 +69,12 @@ function RegisterUser(){
 
     function handleLoginClick(){
         setLoading(true)
-        setTimeout(() => navigate("/login"), 1500)
+        navigate("/login");
     }
 
     function handleHomepage(){
         setLoading(true)
-        setTimeout(() => navigate("/"), 1500)
+        navigate("/");
     }
 
     function handleAvatar(e){

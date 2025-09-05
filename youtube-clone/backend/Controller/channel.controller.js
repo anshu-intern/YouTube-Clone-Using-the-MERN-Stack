@@ -12,7 +12,7 @@ export async function addChannel(req, res){
 
         if (channelImageFile){
             const publicId = `${Date.now()}-${channelImageFile.originalname.split('.')[0]}`;
-            result = await uploadCloud(channelImageFile.buffer, publicId, 'channel_Images');
+            result = await uploadCloud(channelImageFile.buffer, publicId, 'channel_images','image');
         }
 
         const newChannel = new channelModel({
@@ -145,7 +145,7 @@ export async function modifyChannelDetailsById(req, res){
                 }
             }
             const publicId = `${Date.now()}-${banner.originalname.split('.')[0]}`;
-            result = await uploadCloud(banner.buffer, publicId, 'channel_banners');
+            result = await uploadCloud(banner.buffer, publicId, 'channel_banners','image');
             channel.channelBanner = result?.secure_url || null;
             channel.channelBanner_id = result?.public_id || null;
         }
@@ -159,7 +159,7 @@ export async function modifyChannelDetailsById(req, res){
                 }
             }
             const publicId = `${Date.now()}-${image.originalname.split('.')[0]}`;
-            result = await uploadCloud(image.buffer, publicId, 'channel_images');
+            result = await uploadCloud(image.buffer, publicId, 'channel_images','image');
             channel.channelImage = result?.secure_url || null;
             channel.channelImage_id = result?.public_id || null;
         }
