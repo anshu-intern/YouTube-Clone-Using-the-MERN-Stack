@@ -24,7 +24,7 @@ function Error(){
                 <span>This page isn't available. Sorry about that.</span>
                 <span>Try searching for something else.</span>
             </div>
-            <div className="flex flex-row justify-around items-center gap-2">
+            <div className="flex flex-col sm:flex-row justify-around items-center gap-2">
                 <div className="flex flex-row justify-around items-center gap-0">
                     <img src={icon} className="h-[40px]"/>
                     <Link to={"/"}>

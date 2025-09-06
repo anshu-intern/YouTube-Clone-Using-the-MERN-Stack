@@ -10,6 +10,14 @@ export async function addChannel(req, res){
         const channelImageFile = req.files?.['channelImage']?.[0];
         let result = null;
 
+        const existingChannel = await channelModel.findOne({
+            $or: [{ channelName: channelName },{ channelHandle: channelHandle }]
+        });
+
+        if (existingChannel) {
+            return res.status(400).json({ success : false , message : existingChannel.channelName === channelName ? "Channel name already exists." : "Channel handle already exists."});
+        }
+
         if (channelImageFile){
             const publicId = `${Date.now()}-${channelImageFile.originalname.split('.')[0]}`;
             result = await uploadCloud(channelImageFile.buffer, publicId, 'channel_images','image');

@@ -370,28 +370,28 @@ function ChannelHome(){
 
     return(
         <>
-        <section className='relative flex justify-center items-center w-[100%] p-1'>
-            <article className="relative flex flex-col gap-3 justify-center items-center w-[100%]">
+        <section className='flex justify-start items-start sm:justify-center sm:items-center w-[100%] h-auto p-1'>
+            <article className="relative flex flex-col gap-3 justify-start items-start sm:justify-center sm:items-center w-[100%] h-[100%] overflow-scroll">
                 { channel.channelBanner && 
                     <div className='relative w-[100%] max-w-[1300px] rounded-2xl overflow-hidden p-2 pb-4'>
                         <img src={channel.channelBanner} alt='banner' className='relative h-[180px] w-[100%] object-cover'/>
                     </div>
                 }
-                <div className='relative w-[100%] max-w-[1300px] flex flex-row gap-4 p-2'>
-                    { channel.channelImage && <img src={channel.channelImage} alt='' className='relative h-[180px] w-[180px] rounded-full overflow-hidden'/>}
+                <div className='relative w-[100%] max-w-[1300px] flex flex-row gap-4 md:p-2'>
+                    { channel.channelImage && <img src={channel.channelImage} alt='image' className='relative h-[80px] w-[480px] md:h-[180px] md:w-[800px] max-w-[180px] rounded-full overflow-hidden'/>}
                     { !channel.channelImage && <div className='relative group'>
-                        <span className='relative flex justify-center items-center h-[180px] w-[180px] rounded-full overflow-hidden bg-green-800 text-white text-[66px] font-bold leading-none text-center'>
+                        <span className='relative flex justify-center items-center h-[80px] w-[80px] md:h-[180px] md:w-[180px] rounded-full overflow-hidden bg-green-800 text-white md:text-[66px] md:font-bold text-[36px] leading-none text-center'>
                             {channel.channelName?.charAt(0).toUpperCase()}
                         </span>
                         { user?.loggedInUser?.userId === channel.owner_id && 
-                        <span className='absolute inset-0 bg-black bg-opacity-30 h-[180px] w-[180px] rounded-full overflow-hidden flex justify-center items-center text-white opacity-0 group-hover:opacity-100 cursor-pointer' onClick={() => setShowSetPic(true)}>
+                        <span className='absolute inset-0 bg-black bg-opacity-30 h-[80px] w-[80px] md:h-[180px] md:w-[180px] rounded-full overflow-hidden flex justify-center items-center text-white opacity-0 group-hover:opacity-100 cursor-pointer' onClick={() => setShowSetPic(true)}>
                             Add image
                         </span>
                         }
                     </div>
                     }
                     { showSetPic && 
-                        <div className='absolute top-50 left-50 border w-[700px] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
+                        <div className='absolute w-[100%] top-[0%] left-[0%] md:top-[70%] md:left-[10%] border md:w-[700px] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
                             <span className='w-[70%] text-[24px] font-bold'>Add channel display picture:</span>
                             { !picPreview && 
                                 <div className='w-[70%] flex flex-col gap-2 justify-center items-center cursor-pointer' onClick={handlePicSetClick}>
@@ -407,13 +407,13 @@ function ChannelHome(){
                             }
 
                             <input type='file' accept="image/*" ref={pictureRef} className='hidden' onChange={handlePictureFileChange}/>
-                            <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-8 bg-blue-600 border-blue-600 text-white cursor-pointer '>Set Picture</button>
+                            <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-8 bg-blue-600 border-blue-600 text-white cursor-pointer' disabled={!channelPic}>Set Picture</button>
                             <button onClick={() => setShowSetPic(false)} className=' border rounded-3xl py-2 px-12 bg-white border-red-600 text-red-600 cursor-pointer '>Cancel</button>
                         </div>
                     }
-                    <div className='flex flex-col justify-start items-start gap-2 min-w-[400px] max-w-[700px]'>
-                        <span className='font-bold text-[32px]'>{channel.channelName}</span>
-                        <div className='flex flex-row justify-start items-start gap-1'>
+                    <div className='flex flex-col justify-start items-start gap-2 md:min-w-[400px] md:max-w-[700px]'>
+                        <span className='font-bold md:text-[32px] text-[24px]'>{channel.channelName}</span>
+                        <div className='flex flex-col sm:flex-row justify-start items-start gap-1'>
                             <span className='font-bold text-[14px]'>{channel.channelHandle}</span>
                             <span>.</span>
                             <span className='text-gray-500 text-[14px]'>{channel.subscribers} subscribers</span>
@@ -423,17 +423,17 @@ function ChannelHome(){
                         { user?.loggedInUser?.userId === channel.owner_id && !channel.description && <span className='relative text-gray-500 text-[14px] p-1 cursor-pointer hover:text-black hover:underline' onClick={() => setShowSetdesc(true)}>Add channel description...</span>}
                         { channel.description && <span className='text-[14px] font-medium pb-3'>{channel.description}</span>}
                         { showSetDesc && 
-                            <div className='absolute top-50 border w-[700px] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
+                            <div className='absolute w-[100%] top-[0%] left-[0%] md:top-[70%] md:left-[10%] border md:w-[700px] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
                                 <span className='w-[70%] text-[24px] font-bold'>Add channel description:</span>
                                 <span className='w-[70%] text-[14px] py-2'>Describe what is your channel all about. This helps visitors understand your content and goals. Go ahead and add a suitable description.</span>
                                 <textarea type='text' placeholder='Add description here...' rows="7" className='w-[70%] border rounded p-2 my-2' onChange={(e) => setChannelDesc(e.target.value)}/>
-                                <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer '>Set description</button>
+                                <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer ' disabled={!channelDesc}>Set description</button>
                                 <button onClick={() => setShowSetdesc(false)} className=' border rounded-3xl py-2 px-12 bg-white border-red-600 text-red-600 cursor-pointer '>Cancel</button>
                             </div>
                         }
                         { user?.loggedInUser?.userId === channel.owner_id && !channel.channelBanner && <button className='relative text-white bg-black font-medium text-[14px] border rounded-3xl py-2 px-4 cursor-pointer hover:shadow-lg' onClick={() => setShowSetBanner(true)}>Upload banner</button>}
                         { showSetBanner && 
-                            <div className='absolute top-50 border w-[700px] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
+                            <div className='absolute w-[100%] top-[0%] left-[0%] md:top-[70%] md:left-[10%] border md:w-[700px] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
                                 <span className='w-[70%] text-[24px] font-bold'>Add channel banner:</span>
                                 { !bannerPreview && <div className='w-[70%] flex flex-col gap-2 justify-center items-center cursor-pointer' onClick={handleBannerSetClick}>
                                     <img src={channelBanner} alt="image" className='h-[180px]'/>
@@ -446,7 +446,7 @@ function ChannelHome(){
                                     </div>
                                 }
                                 <input type='file' accept="image/*" ref={bannerRef} className='hidden' onChange={handleBannerFileChange}/>
-                                <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-8 bg-blue-600 border-blue-600 text-white cursor-pointer '>Set banner</button>
+                                <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-8 bg-blue-600 border-blue-600 text-white cursor-pointer ' disabled={!bannerPic}>Set banner</button>
                                 <button onClick={() => setShowSetBanner(false)} className=' border rounded-3xl py-2 px-12 bg-white border-red-600 text-red-600 cursor-pointer '>Cancel</button>
                             </div>
                         }
@@ -466,7 +466,7 @@ function ChannelHome(){
                         }
                     </div>
                     { showUpdateBanner &&
-                        <div className='absolute border w-[700px] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
+                        <div className='absolute border w-[100%] top-[0%] md:w-[700px] md:left-[10%] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
                             <span className='w-[70%] text-[24px] font-bold'>Update channel banner:</span>
                                 { !bannerPreview && <div className='w-[70%] flex flex-col gap-2 justify-center items-center cursor-pointer' onClick={handleBannerSetClick}>
                                     <img src={channelBanner} alt="image" className='h-[180px]'/>
@@ -479,20 +479,20 @@ function ChannelHome(){
                                     </div>
                                 }
                             <input type='file' accept="image/*" ref={bannerRef} className='hidden' onChange={handleBannerFileChange}/>
-                            <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-8 bg-blue-600 border-blue-600 text-white cursor-pointer '>Update banner</button>
+                            <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-8 bg-blue-600 border-blue-600 text-white cursor-pointer ' disabled={!bannerPic}>Update banner</button>
                             <button onClick={() => setShowUpdateBanner(false)} className=' border rounded-3xl py-2 px-15 bg-white border-red-600 text-red-600 cursor-pointer '>Cancel</button>
                         </div>
                     }
                     { showUpdateDesc &&
-                        <div className='absolute border w-[700px] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
+                        <div className='absolute border w-[100%] top-[0%] md:w-[700px] md:left-[10%] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
                             <span className='w-[70%] text-[24px] font-bold'>Update channel description:</span>
                             <textarea type='text' placeholder='Update description here...' value={channelDesc} rows="7" className='w-[70%] border rounded p-2 my-2' onChange={(e) => setChannelDesc(e.target.value)}/>
-                            <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer '>Update description</button>
+                            <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer ' disabled={channelDesc === channel.description}>Update description</button>
                             <button onClick={() => setShowUpdateDesc(false)} className=' border rounded-3xl py-2 px-16 bg-white border-red-600 text-red-600 cursor-pointer '>Cancel</button>
                         </div>
                     }
                     { showUpdatePic && 
-                        <div className='absolute border w-[700px] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
+                        <div className='absolute border w-[100%] top-[0%] md:w-[700px] md:left-[10%] py-8 bg-white z-40 flex flex-col gap-4 justify-center items-center rounded shadow'>
                             <span className='w-[70%] text-[24px] font-bold'>Update channel display picture:</span>
                             { !picPreview && 
                                 <div className='w-[70%] flex flex-col gap-2 justify-center items-center cursor-pointer' onClick={handlePicSetClick}>
@@ -508,13 +508,13 @@ function ChannelHome(){
                             }
 
                             <input type='file' accept="image/*" ref={pictureRef} className='hidden' onChange={handlePictureFileChange}/>
-                            <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-8 bg-blue-600 border-blue-600 text-white cursor-pointer '>Update Picture</button>
+                            <button onClick={() => handleModifyChannelDetails()} className=' border rounded-3xl py-2 px-8 bg-blue-600 border-blue-600 text-white cursor-pointer' disabled={!channelPic}>Update Picture</button>
                             <button onClick={() => setShowUpdatePic(false)} className=' border rounded-3xl py-2 px-15 bg-white border-red-600 text-red-600 cursor-pointer '>Cancel</button>
                         </div>
                     }
                 </div>
-                <div className='relative h-[100%] w-[100%] text-[16px] font-medium text-gray-500 border-b border-gray-300'>
-                    <div className='flex flex-row gap-6 justify-center items-center'>
+                <div className='relative h-[100%] w-[100%] text-[16px] font-medium text-gray-500 border-b border-gray-300 overflow-x-scroll'>
+                    <div className='flex flex-row gap-6 justify-start md:justify-center items-center'>
                         <div className='relative h-[100%] cursor-pointer border-2 border-white  hover:border-b-black  hover:text-black p-2'>
                             <span>Home</span>
                         </div>
@@ -534,12 +534,12 @@ function ChannelHome(){
                             <span>Posts</span>
                         </div>
                         <div>
-                            { user?.loggedInUser?.userId === channel.owner_id && channel.videos?.length !== 0  && <button className=' px-3 py-2 bg-white text-blue-600 rounded-3xl text-[14px] hover:shadow-lg cursor-pointer border border-blue-600 hover:bg-blue-100' onClick={() => setAddVideo(true)}>Add video</button>}
+                            { user?.loggedInUser?.userId === channel.owner_id && channel.videos?.length !== 0  && <button className=' w-[100px] px-3 py-2 bg-white text-blue-600 rounded-3xl text-[14px] hover:shadow-lg cursor-pointer border border-blue-600 hover:bg-blue-100' onClick={() => setAddVideo(true)}>Add video</button>}
                         </div>
                     </div>
                 </div>
                 { user?.loggedInUser?.userId === channel.owner_id && channel.videos?.length === 0  &&
-                    <div className='relative w-[100%] max-w-[1300px] h-[250px] flex flex-col justify-center items-center  overflow-hidden p-4'>
+                    <div className='relative w-[100%] max-w-[1300px] h-[500px] flex flex-col justify-start items-center  overflow-hidden p-4'>
                         <div className='p-8 rounded-3xl hover:bg-gray-100 cursor-pointer' onClick={handleShowAddVideoToChannel}>
                         <img src={uploadVideo} className='h-auto w-auto'/>
                         <span className='text-[14px] text-gray-500'>Add your first video...</span>
@@ -548,8 +548,8 @@ function ChannelHome(){
                 }
                 {
                     addVideo &&  
-                    <div className='absolute z-30 top-[3%] left-[20%]'>
-                        <div className='relative w-[100% h-[100%] flex justify-center items-center'>
+                    <div className='absolute z-30 top-[0%] w-[100%]'>
+                        <div className='relative w-[100%] h-[100%] flex justify-center items-center'>
                             <AddVideoToChannel add={(e) => handleAddVideoToChannel(e)} cancel={setAddVideo}/>
                         </div>
                     </div>

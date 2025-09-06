@@ -15,6 +15,7 @@ function Header({toggleSideBar}){
     const [ searchText, setSearchText ] = useState('');
     const [ searchBar, setSearchBar ] = useState(false);
     const userdropDownRef = useRef(null);
+    const [ showSearch, setShowSearch ] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('Token');
@@ -97,8 +98,12 @@ function Header({toggleSideBar}){
                 localStorage.removeItem('Token');
                 user.setLoggedInUser(null);
                 alert("User session expired. Please login and try again.");
-            } else {
+            }
+            if (err.response.status === 500){
                 alert("Error occured! Please try after some time.");
+            }
+            if (err.response.status === 400){
+                alert(err.response.data.message);
             }
             user.setLoad(false);
         }
@@ -124,7 +129,12 @@ function Header({toggleSideBar}){
         if(searchText.length > 0){
             navigate(`/?q=${encodeURIComponent(searchText)}`);
             setSearchText('');
+            setShowSearch(false);
         }
+    }
+
+    function handleShowSearch(){
+        setShowSearch(!showSearch);
     }
 
     return(
@@ -138,35 +148,44 @@ function Header({toggleSideBar}){
         }
         {
             showCreateChannel && 
-            <div className='absolute z-30 top-[20%] left-[30%]'>
+            <div className='absolute z-30 top-[10%] flex justify-center items-center w-[100%]'>
                 <div className='relative w-[100% h-[100%] flex justify-center items-center'>
                     <CreateChannel cancel={handleCloseCreateChannel} create={handleCreateChannelClick}/>
                 </div>
             </div>
         }
-        <header className="flex flex-row gap-2  h-[58px] items-stretch justify-between sticky top-0 pt-2 px-[20px] pb-1 z-10 bg-white">
+        <header className="flex flex-row gap-2  h-[58px] items-stretch justify-between sticky top-0 pt-2 sm:px-1 lg:px-[20px] pb-1 z-10 bg-white">
             <div className="flex flex-row gap-3 h-[100%] items-center relative px-2 ">
-                <nav className="flex flex-row h-[80%] items-center relative p-1.5">
+                <nav className="hidden sm:block flex flex-row h-[80%] items-center relative p-1.5">
                     <button className="flex flex-col gap-1.5 justify-center w-10 cursor-pointer p-[8px] hover:bg-gray-200 hover:rounded-full" onClick={toggleSideBar}>
                         <span className="block h-[1px] bg-black rounded"></span>
                         <span className="block h-[1px] bg-black rounded"></span>
                         <span className="block h-[1px] bg-black rounded"></span>
                     </button>
                 </nav>
-                <div className="flex flex-row h-[100%] items-center relative">
-                    <img src={icon} alt={"youtube image"} className='h-[32px] cursor-pointer' onClick={navigateHome}></img>
+                <div className="relative flex flex-row h-[100%] w-[32px] sm:w-[150px] items-center relative">
+                    <img src={icon} alt={"youtube image"} className='relative h-[32px] w-[32px] cursor-pointer' onClick={navigateHome}/>
                     <h1 className="text-l font-bold hover:cursor-pointer" onClick={navigateHome}>YouTube<sup className='pl-[4px] text-s font-light'>clone</sup></h1>
                 </div>
             </div>
-            <div className='relative flex flex-row justify-center items-center h-[100%] border border-gray-500 rounded-3xl overflow-hidden'>
-                { searchBar && <div className='relative h-[60%] pl-3'><img src={serachicon} alt='searchicon' className='relative h-[100%] overflow-hidden'/></div> }
-                <input type="text" name="search_query" value={searchText} placeholder="Search" className='relative w-[550px] h-[100%] focus:outline-none px-4 pl-5' onChange={ e => {handleSearchText(e)}} onFocus={e => setSearchBar(true)} onBlur={e => setSearchBar(false)}/>
+            <div className='hidden sm:block relative flex flex-row justify-center items-center h-[100%] border border-gray-500 rounded-3xl overflow-hidden'>
+                { searchBar && <div className='relative h-[60%] sm:pl-3'><img src={serachicon} alt='searchicon' className='relative h-[100%] overflow-hidden'/></div> }
+                <input type="text" name="search_query" value={searchText} placeholder="Search" className='relative w-[550px] h-[100%] focus:outline-none sm:px-4 sm:pl-5' onChange={ e => {handleSearchText(e)}} onFocus={e => setSearchBar(true)} onBlur={e => setSearchBar(false)}/>
                 <button className='relative h-[100%] px-2.5 border-l px-6 bg-gray-100 cursor-pointer hover:bg-gray-200' onClick={handleSearch}><img src={serachicon} alt='search icon' className='relative h-[60%] overflow-hidden'></img></button>
             </div>
             <div className="relative flex flex-row gap-3 h-[100%] items-center px-2">
+                <div className='block sm:hidden flex flex-row justify-center items-center h-[40px] w-[40px] border border-gray-300 bg-gray-100 rounded-full overflow-hidden'>
+                   <button className='bg-gray-100 cursor-pointer hover:bg-gray-200' onClick={() => handleShowSearch()}><img src={serachicon} alt='search icon' className='relative h-[24px] w-[30px] overflow-hidden'></img></button>
+                    { showSearch && 
+                        <div className='absolute top-[100%] right-[0%] z-50 bg-gray-100 w-[100vw] h-[100vh] py-2 px-1'>
+                            <input type="text" name="search_query" value={searchText} placeholder="Search here..." className='p-1 focus:outline-blue-100 w-[78vw] h-[40px] border bg-white' onChange={ e => {handleSearchText(e)}} onFocus={e => setSearchBar(true)} onBlur={e => setSearchBar(false)}/>
+                            <button className='relative w-[18vw] h-[40px] bg-blue-500 text-white cursor-pointer hover:bg-gray-200 border border-blue-600 border-l-0' onClick={handleSearch}>search</button>
+                        </div>
+                    }
+                </div>
                 {
                     !user.loggedInUser && 
-                    <button className="flex flex-col justify-center items-center gap-1 cursor-pointer hover:bg-gray-200 w-[40px] rounded-full p-2">
+                    <button className="hidden sm:block flex flex-col justify-center items-center gap-1 cursor-pointer hover:bg-gray-200 w-[40px] rounded-full p-2">
                         <span className="w-[3px] h-[3px] bg-black rounded-full"></span>
                         <span className="w-[3px] h-[3px] bg-black rounded-full"></span>
                         <span className="w-[3px] h-[3px] bg-black rounded-full"></span>
@@ -199,7 +218,7 @@ function Header({toggleSideBar}){
                                     </div>
                                 </div>}
                         </div> ) : (
-                        <button className='relative border rounded-3xl px-3 text-blue-500 h-[90%] font-bold cursor-pointer hover:bg-blue-100 border-gray-300' onClick={handleSignIn}>Sign in</button>
+                        <button className='relative w-[80px] border rounded-3xl px-1 sm:px-3 text-blue-500 h-[90%] font-bold cursor-pointer hover:bg-blue-100 border-gray-300' onClick={handleSignIn}>Sign in</button>
                     )
                 }
             </div>

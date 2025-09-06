@@ -17,14 +17,27 @@ import youtubepremium_icon from '../assets/icons/head_icon.png'
 import youtubemusic_icon from '../assets/icons/youtubemusic_icon.png'
 import youtubekids_icon from '../assets/icons/youtubekids_icon.png'
 import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
 
 
-function Sidebar({collapseAsideBar}){
+function Sidebar({collapseAsideBar, setcollapseAsideBar}){
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 640) {
+                setcollapseAsideBar(true);
+            }
+        }
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return(
-        <aside className= {`relative flex flex-col justify-start items-start max-w-[240px] h-[100%] overflow-scroll px-[14px] ${collapseAsideBar? 'p-0' : ''} `}>
-            <div className ={`relative flex flex-col gap-1 border-b border-gray-300 w-[100%] p-2 ${collapseAsideBar? 'border-none p-0 max-w-[80%]' : ''}`}>
+        <aside className= {`relative flex flex-row justify-center items-center w-[100vw] sm:flex-col sm:justify-start sm:items-start sm:h-[100%] overflow-scroll lg:px-[14px] ${collapseAsideBar? 'p-0 sm:w-[80px] h-[70px] bg-gray-500 text-white sm:bg-white sm:text-black' : 'sm:max-w-[240px] h-[100px]'} `}>
+            <div className ={`relative flex flex-row justify-center items-center sm:justify-start sm:items-start p-0 sm:flex-col gap-2 sm:gap-1 border-b border-gray-300 sm:w-[100%] sm:p-2 ${collapseAsideBar? 'border-none p-0 max-w-[80%]' : ''}`}>
                 <Link to="/">
-                <div className={`flex justify-start items-center gap-6 h-[38px] hover:bg-gray-100 rounded-xl px-4 py-2 cursor-pointer ${collapseAsideBar? 'flex-col gap-[6px] h-[100%]' : ''}`}>
+                <div className={`flex justify-start items-center gap-6 h-[38px] hover:bg-gray-100 rounded-xl px-4 py-2 cursor-pointer ${collapseAsideBar? 'flex-col gap-[6px] h-[100%] ' : ''}`}>
                     <img src={home_icon} className= "h-[24px]"/>
                     <span className={`font-light ${collapseAsideBar? 'text-[10px]' : 'text-[14px]'}`}>Home</span>
                 </div>
@@ -33,18 +46,18 @@ function Sidebar({collapseAsideBar}){
                     <img src={shorts_icon} className='h-[24px]'/>
                     <span className={`font-light ${collapseAsideBar? 'text-[10px]' : 'text-[14px]'}`}>Shorts</span>
                 </div>
-                <div className={`flex justify-start items-center gap-6 h-[38px] hover:bg-gray-100 rounded-xl px-4 py-2 cursor-pointer ${collapseAsideBar? 'flex-col gap-[6px] h-[100%]' : ''}`}>
+                <div className={`flex justify-start items-center gap-6 h-[38px] hover:bg-gray-100 rounded-xl  py-2 cursor-pointer ${collapseAsideBar? 'flex-col gap-[6px] h-[100%] px-0' : 'px-4'}`}>
                     <img src={subscription_icon} className='h-[24px]'/>
                     <span className={`font-light ${collapseAsideBar? 'text-[10px]' : 'text-[14px]'}`}>Subscription</span>
                 </div>
             </div>
-            <div className={`relative flex flex-col gap-1 border-b border-gray-300 w-[100%] p-2 ${collapseAsideBar? 'border-none p-0 max-w-[80%]' : ''}`}>
-                <div className={`flex justify-start items-center gap-6 h-[38px] hover:bg-gray-100 rounded-xl px-4 py-2 cursor-pointer ${collapseAsideBar? 'flex-col gap-[6px] h-[100%]' : ''}`}>
+            <div className={`relative flex flex-row justify-start items-center p-0 sm:flex-col sm:justify-start sm:items-start gap-3 sm:gap-1 border-b border-gray-300 sm:w-[100%] sm:p-2 ${collapseAsideBar? 'border-none p-0 max-w-[80%]' : ''}`}>
+                <div className={`flex justify-start items-center gap-6 h-[38px] hover:bg-gray-100 rounded-xl  py-2 cursor-pointer ${collapseAsideBar? 'flex-col gap-[6px] h-[100%] pl-5' : 'px-4'}`}>
                     <img src={user_icon} className='h-[24px]'/>
                     <span className={`font-light ${collapseAsideBar? 'text-[10px]' : 'text-[14px]'}`}>You</span>
                 </div>
-                <div className={`flex justify-start items-center gap-6 h-[38px] hover:bg-gray-100 rounded-xl px-4 py-2 cursor-pointer ${collapseAsideBar? 'flex-col gap-[6px] h-[100%]' : ''}`}>
-                    <img src={history_icon} className='h-[24px]'/>
+                <div className={`flex justify-start items-center gap-6 h-[38px] hover:bg-gray-100 rounded-xl  py-2 cursor-pointer ${collapseAsideBar? 'flex-col gap-[6px] h-[100%] pl-4 ' : 'px-4'}`}>
+                    <img src={history_icon} className='h-[24px] w-[24px]'/>
                     <span className={`font-light ${collapseAsideBar? 'text-[10px]' : 'text-[14px]'}`}>History</span>
                 </div>
             </div>

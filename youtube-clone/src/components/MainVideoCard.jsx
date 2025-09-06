@@ -1,4 +1,3 @@
-import userProfilePic from '../assets/icons/userProfilePic.jpg';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { Link } from 'react-router-dom';
 
@@ -18,7 +17,7 @@ function MainVideoCard({value}){
         <article className='relative flex flex-col justify-start items-start gap-0 p-1 w-[32%] h-[46%] min-h-[380px] overflow-hidden '>
             <div className='relative overflow-hidden w-[100%] h-[70%] rounded-xl'>
                 <Link to={`watch/${value._id}`} className='w-[100%]'>
-                    <img src={`../../backend/${value.thumbnailUrl}`} alt='video image' className='h-[100%] w-[100%]'/>
+                    <img src={`${value.thumbnailUrl}`} alt='video image' className='h-[100%] w-[100%]'/>
                </Link>
             </div>
             <Link to={`watch/${value._id}`} className='w-[100%]'>

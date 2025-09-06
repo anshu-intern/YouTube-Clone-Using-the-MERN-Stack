@@ -105,16 +105,16 @@ function RegisterUser(){
         <section className="relative flex flex-col justify-center items-center w-[100vw] h-[100vh] bg-slate-100 p-10">
             {
                 loading &&
-                <div className='relative w-[1020px] max-w-[1020px]'>
+                <div className='relative w-[100%] lg:w-[1020px] lg:max-w-[1020px]'>
                     <span className='absolute top-0 left-0 w-[100%] h-[4px] bg-gradient-to-r from-blue-500 via-green-400 to-red-500 transition-all duration-500'></span>
                 </div>
             }
-            <article className='flex flex-col justify-center items-center w-[1024px] max-w-[1024px] overflow-hidden bg-white p-6 rounded-2xl'>
-                <div className='flex flex-row gap-4 justify-center items-start w-[100%] p-4'>
+            <article className='flex flex-col justify-start items-center w-[100%] min-h-[650px] lg:justify-center lg:items-center lg:w-[1024px] max-w-[1024px] overflow-x-scroll bg-white lg:p-6 rounded-2xl'>
+                <div className='flex flex-row justify-start items-start gap-0 lg:gap-4 lg:justify-center lg:items-start w-[100%] pt-10 p-4 lg:p-4'>
                     <img src={icon} alt='youtube_icon' className='h-[50px]'/>
-                    <h1 className='text-[32px] font-bold '>Create a YouTube - clone Account</h1>
+                    <h1 className='text-[24px] lg:text-[32px] font-bold '>Create a YouTube - clone Account</h1>
                 </div>
-                <div className='relative flex flex-col justify-center items-center gap-1 w-[50%] py-6'>
+                <div className='relative flex flex-col justify-center items-center gap-1  w-[80%] lg:w-[50%] lg:py-6'>
                     <div className='flex flex-col justify-center items-center cursor-pointer hover:bg-blue-100 pt-3 pb-3 px-8 rounded-xl' onClick={()=> avatarRef.current.click()}>
                         { !avatarPreview && <img src={userProfilePic} alt="image" className='h-[150px] w-[150px] rounded-full'/> }
                         { avatarPreview && <img src={avatarPreview} alt="image" className='h-[150px] w-[150px] rounded-full'/> }
@@ -125,15 +125,15 @@ function RegisterUser(){
 
                     <label className='w-[100%]'>Username:</label>
                     <input type="text" className={`w-[100%] border p-1 rounded ${userNameErr ? 'border-2 border-red-600' : 'border' }`} required value={userName} onChange={(e)=> handleUsernameInput(e) }/>
-                    <div className='text-gray-500 h-[24px] text-[14px] w-[100%] text-red-600'>{userNameErr}</div>
+                    <div className='text-gray-500 h-[48px] sm:h-[24px] text-[14px] w-[100%] text-red-600'>{userNameErr}</div>
 
                     <label className='w-[100%]'>E-mail:</label>
                     <input type="email" className='w-[100%] border p-1 rounded' required value={email} onChange={(e)=> handleEmailInput(e) }/>
-                    <div className='text-gray-500 h-[24px] text-[14px] w-[100%] text-red-600'>{emailErr}</div>
+                    <div className='text-gray-500 h-[48px] sm:h-[24px] text-[14px] w-[100%] text-red-600'>{emailErr}</div>
 
                     <label className='w-[100%]'>Password:</label>
                     <input type="password" className='w-[100%] border p-1 rounded' required value={password} onChange={(e)=> handlePasswordInput(e) }/>
-                    <div className='text-gray-500 h-[24px] text-[14px] w-[100%] text-red-600'>{passwordErr}</div>
+                    <div className='text-gray-500 h-[48px] sm:h-[24px] text-[14px] w-[100%] text-red-600'>{passwordErr}</div>
 
                 </div>
                 <div className='flex flex-col gap-0 justify-center items-center pb-2'>
