@@ -17,6 +17,7 @@ function RegisterUser(){
     const avatarRef = useRef(null);
     const navigate = useNavigate();
 
+    // api to register new user
     async function handleRegisterClick(){
         if (userName.trim().length === 0){
             setUserNameErr("Username not entered");
@@ -54,7 +55,7 @@ function RegisterUser(){
                 navigate("/login");
             }   
         } catch(err){
-            if(err.response.status === 409){
+            if(err.response?.status === 409){
                 if(err.response.data.message.toLowerCase().includes("email")){
                     setEmailErr(err.response.data.message);
                 } else {

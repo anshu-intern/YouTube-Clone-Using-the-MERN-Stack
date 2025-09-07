@@ -6,7 +6,7 @@ import { uploadCloud, deleteFromCloudinary } from '../Middleware/storage.cloudin
 // Get all videos.
 export async function getVideo(req, res){
     try{
-        const videos = await videoModel.find();
+        const videos = await videoModel.find().populate({ path: "uploader", select: "username"});
         if (!videos) {
             return res.status(404).json({ success: false , message: "No data found." });
         }

@@ -30,8 +30,8 @@ async function appServer(){
 
     try{
         await connectDB();
+        app.get("/", (req,res)=> { return res.send("Welcome to root route.")});
         routes(app);
-
         const app_port = process.env.PORT || 3000;
         app.listen(app_port, (err) => { err ? console.error(`Server failed to start. Message- ${err}`) : console.log(`Server started successfully on port ${app_port}.`); })
     } catch(err){

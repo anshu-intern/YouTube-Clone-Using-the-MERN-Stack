@@ -45,7 +45,7 @@ function ChannelHome(){
     const [ update, setUpdate ] = useState(false);
     const navigate = useNavigate();
 
-
+    // load channel details.
     useEffect(() => {
         async function loadChannel(){
             try{
@@ -94,6 +94,7 @@ function ChannelHome(){
         setAddVideo(true);
     }
 
+    // logic and api to add video to channel
     async function handleAddVideoToChannel(data){
         try{
             const formData = new FormData();
@@ -112,7 +113,7 @@ function ChannelHome(){
                 user.setLoad(false);
             }
         } catch(err){
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 setAddVideo(false);
                 localStorage.removeItem('Token');
                 user.setLoggedInUser(null);
@@ -124,6 +125,7 @@ function ChannelHome(){
         }
     }
 
+    // api to delete channel
     async function handledeleteChannel(){
         try{
             user.setLoad(true);
@@ -136,7 +138,7 @@ function ChannelHome(){
                 navigate("/");
             }
         } catch(err){
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 setShowChannelOptions(false);
                 localStorage.removeItem('Token');
                 user.setLoggedInUser(null);
@@ -148,6 +150,7 @@ function ChannelHome(){
         }
     }
 
+    //api to modify channel details
     async function handleModifyChannelDetails(){
         try{
             const formData = new FormData();
@@ -181,7 +184,7 @@ function ChannelHome(){
             }
         
         } catch(err){
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 setShowSetPic(false);
                 setChannelPic(null);
                 setPicPreview(null);
@@ -255,6 +258,7 @@ function ChannelHome(){
         setVideoCat(category);
     }
 
+    // api to delete video
     async function handleDeleteVideo(id){
         try{
             user.setLoad(true);
@@ -265,7 +269,7 @@ function ChannelHome(){
                 user.setLoad(false);
             }
         } catch(err){
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 setShowVideoOptsByVidId(null);
                 localStorage.removeItem('Token');
                 user.setLoggedInUser(null);
@@ -277,6 +281,7 @@ function ChannelHome(){
         }
     }
 
+    //api to modify video details
     async function handleModifyVideoDetails(data){
         try{
             const formData = new FormData();
@@ -300,7 +305,7 @@ function ChannelHome(){
                 user.setLoad(false);
             }
         } catch(err){
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 setVideoThumbModal(false);
                 setVideoDescModal(false); 
                 setVideoTitleModal(false);
@@ -330,6 +335,7 @@ function ChannelHome(){
         setChannelDesc(channel.description);
     }
 
+    //api to subscribe to channel
     async function handleChannelSubscribe(){
         try{
             const token = localStorage.getItem('Token');
@@ -339,7 +345,7 @@ function ChannelHome(){
                 user.setLoggedInUser(userResp.data.data);
             }
         } catch(err){
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 localStorage.removeItem('Token');
                 user.setLoggedInUser(null);
                 alert("User session expired. Please login and try again.");
@@ -349,6 +355,7 @@ function ChannelHome(){
         }
     }
 
+    //api to unsubscribe to channel
     async function handleChannelUnsubscribe(){
          try{
             const token = localStorage.getItem('Token');
@@ -358,7 +365,7 @@ function ChannelHome(){
                 user.setLoggedInUser(userResp.data.data);
             }
         } catch(err){
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 localStorage.removeItem('Token');
                 user.setLoggedInUser(null);
                 alert("User session expired. Please login and try again.");
@@ -555,14 +562,14 @@ function ChannelHome(){
                     </div>
                 }
                 { channel.videos?.length !== 0  &&
-                    <div className='relative w-[100%] max-w-[1300px] h-[100%] flex flex-row justify-start items-center gap-3 flex-wrap p-2'>
+                    <div className='relative w-[100%] max-w-[1300px] h-[100%] flex flex-col md:flex-row justify-start items-center md:justify-center md:items-start md:items-center gap-3 md:flex-wrap p-2'>
             
                         { channel.videos?.map( (vid, idx) => { 
                             if (!vidMenuRef.current[vid._id]) {
                                 vidMenuRef.current[vid._id] = React.createRef();
                             }
                             return( 
-                            <div key={vid._id} className='relative flex flex-col justify-start items-start gap-0 p-1 h-[340px] w-[30%] '>
+                            <div key={vid._id} className='relative flex flex-col md:justify-start md:items-start gap-0 p-1 h-[340px] w-[100%] max-w-[400px] md:w-[40%] md:max-w-[400px] '>
                                 <Link to={`/watch/${vid._id}`} className='w-[100%] cursor-pointer'>
                                 <img src={vid.thumbnailUrl} alt="video" className='relative h-[200px] w-[100%] rounded-xl object-cover pb-1'/>
                                 </Link>
@@ -597,40 +604,40 @@ function ChannelHome(){
                             } )
                         }
                         { videoThumbModal &&
-                            <div className='absolute top-0 left-80 border border-gray-500 w-[700px] flex flex-col justify-center items-center gap-4 z-30 bg-white rounded shadow-xl py-4'>
+                            <div className='absolute top-0 left-[0%] w-[100%] border border-gray-500 md:w-[700px] md:left-[10%] flex flex-col justify-center items-center gap-4 z-30 bg-white rounded shadow-xl py-4'>
                                 <span className='text-[20px] font-bold w-[70%] py-1'>Update video thumbnail:</span>
                                 { !videoThumbPreview && <div className='cursor-pointer px-4 flex flex-col justify-center items-center bg-center py-4 hover:bg-blue-100 ' onClick={handleThumbSetClick}><img src={uploadVideoThumb} alt='image' className='h-[100px]'/>
                                 <span>Select a thumbnail image</span></div> }
                                 { videoThumbPreview && <div className='cursor-pointer px-4 flex flex-col justify-center items-center bg-center py-4 hover:bg-blue-100 '  onClick={handleThumbSetClick}><img src={videoThumbPreview} alt='image' className='h-[100px]'/>
                                 <span>{videoThumb.name}</span></div>}
                                 <input type='file' accept='image' className='hidden' ref={videoThumbRef} onChange={handleVideoThumbChange}/>
-                                <button onClick={() => handleModifyVideoDetails({'thumbnail' : videoThumb}) } className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer '>Update thumbnail</button>
+                                <button onClick={() => handleModifyVideoDetails({'thumbnail' : videoThumb}) } className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer ' disabled={!videoThumb}>Update thumbnail</button>
                                 <button onClick={() => setVideoThumbModal(false) } className=' border rounded-3xl py-2 px-15 bg-white border-red-600 text-red-600 cursor-pointer '>Cancel</button>
                             </div>                             
                         }
                         { videoDescModal &&
-                            <div className='absolute top-0 left-80 border border-gray-500 w-[700px] flex flex-col justify-center items-center gap-4 z-30 bg-white rounded shadow-xl py-4'>
+                            <div className='absolute top-0 left-[0%] w-[100%] border border-gray-500 md:w-[700px] md:left-[10%] flex flex-col justify-center items-center gap-4 z-30 bg-white rounded shadow-xl py-4'>
                                 <span className='text-[20px] font-bold w-[70%] py-1'>Update video description:</span>
                                 <textarea className='border w-[70%] p-2' rows="7" placeholder='Update description here...' value={videoDesc} onChange={(e) => setVideoDesc(e.target.value)}></textarea>
-                                <button onClick={() => handleModifyVideoDetails({description: videoDesc} , showVideoOptsByVidId ) } className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer '>Update description</button>
+                                <button onClick={() => handleModifyVideoDetails({description: videoDesc} , showVideoOptsByVidId ) } className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer ' disabled={!videoDesc}>Update description</button>
                                 <button onClick={() => setVideoDescModal(false) } className=' border rounded-3xl py-2 px-15 bg-white border-red-600 text-red-600 cursor-pointer '>Cancel</button>
                             </div>                             
                         }
                         {
                             videoTitleModal && 
-                            <div className='absolute top-0 left-80 border border-gray-500 w-[700px] flex flex-col justify-center items-center gap-4 z-30 bg-white rounded shadow-xl py-4'>
+                            <div className='absolute top-0 left-[0%] w-[100%] border border-gray-500 md:w-[700px] md:left-[10%] flex flex-col justify-center items-center gap-4 z-30 bg-white rounded shadow-xl py-4'>
                                 <span className='text-[20px] font-bold w-[70%] py-1'>Update video title:</span>
                                 <input type="text" className='border w-[70%] p-2 mb-3'  placeholder='Update title here...' value={videoTitle} onChange={(e) => setVideoTitle(e.target.value)}/>
-                                <button onClick={() => handleModifyVideoDetails({title: videoTitle} , showVideoOptsByVidId ) } className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer '>Update Title</button>
+                                <button onClick={() => handleModifyVideoDetails({title: videoTitle} , showVideoOptsByVidId ) } className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer ' disabled={!videoTitle}>Update Title</button>
                                 <button onClick={() => setVideoTitleModal(false) } className=' border rounded-3xl py-2 px-10 bg-white border-red-600 text-red-600 cursor-pointer '>Cancel</button>
                             </div>  
                         }
                         {
                             videoCatModal && 
-                            <div className='absolute top-0 left-80 border border-gray-500 w-[700px] flex flex-col justify-center items-center gap-4 z-30 bg-white rounded shadow-xl py-4'>
+                            <div className='absolute top-0 left-[0%] w-[100%] border border-gray-500 md:w-[700px] md:left-[10%] flex flex-col justify-center items-center gap-4 z-30 bg-white rounded shadow-xl py-4'>
                                 <span className='text-[20px] font-bold w-[70%] py-1'>Update video category:</span>
                                 <input type="text" className='border w-[70%] p-2 mb-3'  placeholder='Update category here...' value={videoCat} onChange={(e) => setVideoCat(e.target.value)}/>
-                                <button onClick={() => handleModifyVideoDetails({category: videoCat}, showVideoOptsByVidId ) } className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer '>Update Category</button>
+                                <button onClick={() => handleModifyVideoDetails({category: videoCat}, showVideoOptsByVidId ) } className=' border rounded-3xl py-2 px-5 bg-blue-600 border-blue-600 text-white cursor-pointer ' disabled={!videoCat}>Update Category</button>
                                 <button onClick={() => setVideoCatModal(false) } className=' border rounded-3xl py-2 px-14 bg-white border-red-600 text-red-600 cursor-pointer '>Cancel</button>
                             </div>  
                         }

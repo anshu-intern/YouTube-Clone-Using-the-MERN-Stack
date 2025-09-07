@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { formatDistanceToNowStrict } from 'date-fns';
 import userContext from '../assets/utils/userContext';
@@ -13,7 +13,13 @@ function VideoPlayPage(){
     const [ otherVideos, setOtherVideos] = useState([]);
     const { loggedInUser, setLoggedInUser, setLoad } = useContext(userContext);
     const navigate = useNavigate();
+    const scrollRef = useRef(null);
 
+    useLayoutEffect(() => {
+        scrollRef.current.scrollTo(0, 0);
+    }, [video_id]);
+
+    // api to get video by id
     useEffect(()=>{
         async function fetchVideo(){
             try{
@@ -29,6 +35,7 @@ function VideoPlayPage(){
         setLoad(false);
     }, [video_id, loggedInUser]);
 
+    //api to fetch all videos
     useEffect(()=>{
         async function loadExtra() {
                 try{
@@ -37,7 +44,6 @@ function VideoPlayPage(){
                     setOtherVideos(resp.data.data);
                     setLoad(false);
                 } catch(err){
-                    console.error(err);
                     setLoad(false);
                 }   
             }
@@ -57,6 +63,7 @@ function VideoPlayPage(){
         return formatDistanceToNowStrict(new Date(date), { addSuffix: true });
     }
 
+    //api to like a video
     async function handleAddVideoLike(){
         try{
             const resp = await axios.patch(`/api/video/like/${video_id}`, {} , { headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
@@ -65,26 +72,7 @@ function VideoPlayPage(){
                 setLoggedInUser(userResp.data.data);
             }
         } catch(err){
-            console.error(err)
-            if(err.response.status === 401){
-                localStorage.removeItem('Token');
-                setLoggedInUser(null);
-                alert("User session expired. Please login and try again.");
-            } else {
-                alert("Error occured! Please try after some time.");
-            }
-        }
-    }
-    async function handleAddVideoDisLike(){
-        try{
-            const resp = await axios.patch(`/api/video/dislike/${video_id}`, {} ,{ headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
-            if (resp.status === 200){
-                const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${localStorage.getItem('Token')}`}} );
-                setLoggedInUser(userResp.data.data);
-            }
-        } catch(err){
-            console.error(err)
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 localStorage.removeItem('Token');
                 setLoggedInUser(null);
                 alert("User session expired. Please login and try again.");
@@ -94,6 +82,26 @@ function VideoPlayPage(){
         }
     }
 
+    //api to dislike a video
+    async function handleAddVideoDisLike(){
+        try{
+            const resp = await axios.patch(`/api/video/dislike/${video_id}`, {} ,{ headers: { Authorization: `JWT ${localStorage.getItem('Token')}` } });
+            if (resp.status === 200){
+                const userResp = await axios.get("/api/user/data", { headers: {Authorization: `JWT ${localStorage.getItem('Token')}`}} );
+                setLoggedInUser(userResp.data.data);
+            }
+        } catch(err){
+            if(err.response?.status === 401){
+                localStorage.removeItem('Token');
+                setLoggedInUser(null);
+                alert("User session expired. Please login and try again.");
+            } else {
+                alert("Error occured! Please try after some time.");
+            }
+        }
+    }
+
+    //api to subscribe to channel
     async function handleChannelSubscribe(){
         try{
             const token = localStorage.getItem('Token');
@@ -103,8 +111,7 @@ function VideoPlayPage(){
                 setLoggedInUser(userResp.data.data);
             }
         } catch(err){
-            console.error(err);
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 localStorage.removeItem('Token');
                 setLoggedInUser(null);
                 alert("User session expired. Please login and try again.");
@@ -114,6 +121,7 @@ function VideoPlayPage(){
         }
     }
 
+    //api to unsubscribe to channel
     async function handleChannelUnsubscribe(){
          try{
             const token = localStorage.getItem('Token');
@@ -123,8 +131,7 @@ function VideoPlayPage(){
                 setLoggedInUser(userResp.data.data);
             }
         } catch(err){
-            console.error(err);
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 localStorage.removeItem('Token');
                 setLoggedInUser(null);
                 alert("User session expired. Please login and try again.");
@@ -136,15 +143,15 @@ function VideoPlayPage(){
 
     return(
         <>
-        <section className="relative h-[100%] w-[100%] flex justify-start items-start gap-5 py-5 px-[30px] overflow-scroll">
-            <div className="relative h-[auto] w-3/4 flex flex-col justify-start gap-2 items-start">
+        <section ref={scrollRef} className="relative h-[100%] w-[100%] flex flex-col justify-start items-center lg:flex-row lg:justify-start lg:items-start gap-5 py-5 lg:px-[30px] overflow-scroll">
+            <div className="relative h-[auto] w-[90%] lg:w-3/4 flex flex-col justify-start gap-2 items-start">
                 <div className="relative w-[100%] h-[auto] rounded-xl overflow-hidden">
-                    <video src={`../../backend/${video.videoUrl}`} controls className="relative w-[100%] h-[auto]"></video>
+                    <video src={`${video.videoUrl}`} controls className="relative w-[100%] h-[auto]"></video>
                 </div>
 
-                <span className="font-bold text-[20px]">{video.title}</span>
+                <span className="font-bold text-[18px] lg:text-[20px]">{video.title}</span>
 
-                <div className="relative w-[100%] h-[auto] flex flex-row justify-between items-end pb-4">
+                <div className="relative w-[100%] h-[auto] flex flex-col justify-start items-start gap-5 lg:flex-row lg:justify-between lg:items-end lg:gap-0 pb-4">
                     <div className="flex flex-row justify-start items-center gap-8">
                         <div className="flex flex-col gap-0">
                             <Link to={`/channel/${video.channelId?._id}`}>
@@ -175,16 +182,16 @@ function VideoPlayPage(){
 
             </div>
 
-            <div className="relative h-[auto] w-1/4 flex flex-col justify-start items-start gap-2 px-2">
+            <div className="relative h-[auto] w-[100%] lg:w-1/4 flex flex-col justify-start items-start gap-2 px-2">
                 <span className="font-bold pb-2 w-[100%]">Also Browse</span>
                 { 
                     otherVideos.map((other,index)=> (
                         <Link key={index} to={ `/watch/${other._id}`} className='w-[100%]'>
-                        <div className='flex justify-start items-start gap-1 w-[100%] cursor-pointer'>
-                            <img src={`../../backend/${other.thumbnailUrl}`} alt='video image' className='h-[100px] w-[40%] rounded-xl border'/>
+                        <div className='flex flex-col justify-start items-start lg:flex-row lg:justify-start lg:items-start gap-1 w-[100%] cursor-pointer pb-5 px-4 lg:px-0'>
+                            <img src={`${other.thumbnailUrl}`} alt='video image' className='lg:h-[100px] w-[100%] h-[150px] lg:w-[40%] max-w-[300px] rounded-xl border'/>
                             <div className='flex flex-col justify-start items-start w-[60%]'>
                                 <span className='text-[14px] font-bold w-[100%]'>{other.title}</span>
-                                <span className='text-[12px]  w-[100%]'>{other.uploader}</span>
+                                <span className='text-[12px]  w-[100%]'>{other.uploader?.username}</span>
                                 <span className='w-[100%] text-[12px] text-gray-500'>{ formatViewsIntl(other.views) } * {uploadDate(other.uploadDate)}</span>
                             </div>
                         </div>

@@ -37,6 +37,7 @@ function Login(){
         setPasswordErr(null);
     }
 
+    //api to check if username is vaild or not
     async function handleNext(){
         try{
             setLoading(true);
@@ -56,6 +57,7 @@ function Login(){
         }
     }
 
+    //api to login user
     async function handleLogin(){
         try{
             setLoading(true);

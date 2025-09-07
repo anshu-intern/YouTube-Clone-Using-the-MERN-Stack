@@ -1,17 +1,20 @@
-import { StrictMode, useEffect, useState } from 'react'
+import { lazy, StrictMode, Suspense, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import App from './App.jsx'
-import Login from './components/Login.jsx'
 import MainBody from './components/MainBody.jsx'
-import VideoPlayerPage from './components/VideoPlayPage.jsx'
-import ChannelHome from './components/ChannelHome.jsx'
-import RegisterUser from './components/RegisterUser.jsx'
 import userContext from './assets/utils/userContext';
 import { jwtDecode } from 'jwt-decode';
-import Error from './components/Error.jsx';
 
+// Lazy loading for performance optimization...
+const Login = lazy(() => import('./components/Login.jsx'));
+const VideoPlayerPage = lazy(() => import('./components/VideoPlayPage.jsx'));
+const ChannelHome = lazy(() => import('./components/ChannelHome.jsx'));
+const RegisterUser = lazy(() => import('./components/RegisterUser.jsx'));
+const Error = lazy(() => import('./components/Error.jsx'));
+
+//Rouetes defined for the application.
 const appRoute = createBrowserRouter([
   {
     path: "/",
@@ -23,28 +26,28 @@ const appRoute = createBrowserRouter([
       },
       {
         path: "channel/:channel_id",
-        element: <ChannelHome/>
+        element: <Suspense><ChannelHome/></Suspense>
       },
       {
         path: "watch/:video_id",
-        element: <VideoPlayerPage/>
+        element: <Suspense><VideoPlayerPage/></Suspense>
       }
     ],
-    errorElement: <Error/>
+    errorElement: <Suspense><Error/></Suspense>
   },
   {
     path: "/login",
-    element: <Login/>,
-    errorElement: <Error/>
+    element: <Suspense><Login/></Suspense>,
+    errorElement: <Suspense><Error/></Suspense>
   },
   {
     path: "/register",
-    element: <RegisterUser/>,
-    errorElement: <Error/>
+    element: <Suspense><RegisterUser/></Suspense>,
+    errorElement: <Suspense><Error/></Suspense>
   },
   {
     path: "/error",
-    element: <Error/>
+    element: <Suspense><Error/></Suspense>
   }
 ]);
 

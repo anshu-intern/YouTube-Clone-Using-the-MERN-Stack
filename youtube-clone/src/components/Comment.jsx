@@ -34,6 +34,7 @@ function Comment({ videoId, user, item, uploader }){
         setCommentValue(e.target.value);
     }
 
+    //api to post comment to video
     async function handlePostComment(){
         try{
             const newComm = {
@@ -50,7 +51,7 @@ function Comment({ videoId, user, item, uploader }){
                 setTimeout(() => setNewComment(false), 5000);
             }
         } catch(err){
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 localStorage.removeItem('Token');
                 userCont.setLoggedInUser(null);
                 alert("User session expired. Please login and try again.");
@@ -74,6 +75,7 @@ function Comment({ videoId, user, item, uploader }){
         setModifyCommentValue(e.target.value);
     }
 
+    //api to modify comment
     async function handleModifyComment(e){
         try{
             const res = await axios.patch(`/api/comment/${videoId}/${e}`, { text: modifyCommentValue.trim() }, {headers: {Authorization: `JWT ${localStorage.getItem('Token')}`} });
@@ -84,7 +86,7 @@ function Comment({ videoId, user, item, uploader }){
                 setComment(res.data.data);
             }
         } catch(err){
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 setEditingCommentId(null);
                 localStorage.removeItem('Token');
                 userCont.setLoggedInUser(null);
@@ -95,6 +97,7 @@ function Comment({ videoId, user, item, uploader }){
         }
     }
 
+    //api to delete comment
     async function handleDeleteComment(e){
         try{
             const res = await axios.delete(`/api/comment/${videoId}/${e}`, {headers: {Authorization: `JWT ${localStorage.getItem('Token')}`} });
@@ -104,7 +107,7 @@ function Comment({ videoId, user, item, uploader }){
                 setComment(res.data.data);
             }
         } catch(err){
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 localStorage.removeItem('Token');
                 userCont.setLoggedInUser(null);
                 alert("User session expired. Please login and try again.");
@@ -146,12 +149,12 @@ function Comment({ videoId, user, item, uploader }){
 
                     {
                         comment?.slice().sort((a,b)=> new Date(b.updatedAt) - new Date(a.updatedAt) ).map( (comment ,index) => (
-                            <div key={comment._id} className="relative w-[100%] h-[auto] flex gap-3 justify-start pb-10">
+                            <div key={comment._id} className="relative w-[100%] h-[auto] flex flex-col lg:flex-row gap-3 justify-start pb-10">
                                 <div className="relative h-[100%] w-[50px] overflow-hidden rounded-full">
                                     <img src={icon} alt='icon' className='relative h-[50px] w-[50px] rounded-full'/>
                                 </div>
                                 <div className="w-[80%] flex flex-col gap-1">
-                                    <div className='w-[100%]'>
+                                    <div className='w-[100%] flex flex-col sm:flex-row'>
                                         <span className='text-[14px] font-bold'>@{comment.userId}</span>
                                         <span className='pl-2 text-gray-500 text-[12px]'>{uploadDate(comment.updatedAt)}</span>
                                     </div>
@@ -162,11 +165,11 @@ function Comment({ videoId, user, item, uploader }){
                                         { user && <button className="relative h-[100%] px-4 py-2 bg-gray-100 cursor-pointer hover:bg-gray-200 rounded-tr-3xl rounded-br-3xl">Dislike</button>}
                                     </div>
                                 </div>
-                                <div className={`w-[10%] flex ${ editingCommentId? "flex-col" : "flex-row"} justify-center items-center gap-2`}>
+                                <div className={`w-[200px] lg:w-[10%] flex ${ editingCommentId? "flex-col" : "flex-row"} justify-start lg:justify-center items-center gap-2`}>
                                     { editingCommentId !== comment._id && user?.userId === comment.userId && (
                                         <>
-                                        <button className=' rounded-3xl px-4 py-1 cursor-pointer hover:bg-gray-200' onClick={()=>handleOpenModifyComment(comment._id, comment.text)}><img src={edit_img} className='h-[30px] w-[100%]'/></button>
-                                        <button className=' rounded-3xl px-4 py-1 cursor-pointer hover:bg-gray-200' onClick={() => handleDeleteComment(comment._id)}><img src={del_img} className='h-[30px] w-[100%]'/></button>
+                                        <button className=' rounded-3xl px-0 py-0  cursor-pointer hover:bg-gray-200  ' onClick={()=>handleOpenModifyComment(comment._id, comment.text)}><img src={edit_img} className='h-[30px] w-[30px]'/></button>
+                                        <button className=' rounded-3xl px-0 py-0 cursor-pointer hover:bg-gray-200 ' onClick={() => handleDeleteComment(comment._id)}><img src={del_img} className='h-[30px] w-[30px]'/></button>
                                         </>) 
                                     }
                                     { editingCommentId === comment._id && user?.userId === comment.userId && (

@@ -15,6 +15,7 @@ function MainBody(){
     const searchText = queryParams.get('q');
     const navigate = useNavigate();
 
+    //load videos api
     useEffect(() => {
         async function loadVideos() {
             try{
@@ -44,6 +45,7 @@ function MainBody(){
         }
     }, [searchText, videos]);
     
+    // filter videos
     function setFilter(e){
         if(e.target.value === 'all'){
             setActiveCat("all");
@@ -62,7 +64,7 @@ function MainBody(){
                 { <button value='all' className={`px-3 py-[6px] rounded-xl ${activeCat === "all" ? "bg-black text-white" : "bg-gray-200 text-black hover:bg-gray-300"} text-[16px] cursor-pointer`} onClick={ e => setFilter(e)}>All</button> }
                 { category.map( (item, index) => (<button key={index} value={item} className={`px-3 py-[6px] rounded-xl ${activeCat === item ? "bg-black text-white" : "bg-gray-200 text-black hover:bg-gray-300"} font-medium text-[14px] cursor-pointer`} onClick={ e => setFilter(e)}>{item}</button>)) }
             </div>
-            <div className="relative h-[auto] w-[100%] flex flex-row flex-wrap gap-3 px-2 pb-10 overflow-scroll">
+            <div className="relative h-[auto] w-[100%] flex flex-col justify-start items-center md:flex-row md:flex-wrap md:justify-center gap-3 md:px-2 pb-10 overflow-scroll">
                 { filteredVid?.length === 0 && <div className="w-[100%] text-center font-medium text-[20px]">Oops! No videos found...</div>}
                 { filteredVid.map( (item, index) => ( <MainVideoCard key={item._id} value={item} /> )) }
             </div>

@@ -17,6 +17,7 @@ function Header({toggleSideBar}){
     const userdropDownRef = useRef(null);
     const [ showSearch, setShowSearch ] = useState(false);
 
+    //set user session if token is available
     useEffect(() => {
         const token = localStorage.getItem('Token');
         async function fetchUserData(){
@@ -26,7 +27,7 @@ function Header({toggleSideBar}){
                 user.setLoggedInUser(resp.data.data);
                 user.setLoad(false);
             } catch(err){
-                if(err.response.status === 401){
+                if(err.response?.status === 401){
                     localStorage.removeItem('Token');
                     user.setLoggedInUser(null);
                     alert("User session expired. Please login and try again.");
@@ -75,6 +76,7 @@ function Header({toggleSideBar}){
         setShowCreateChannel(false);
     }
 
+    // api to create channel
     async function handleCreateChannelClick(e){
         try{
             const formData = new FormData();
@@ -94,15 +96,15 @@ function Header({toggleSideBar}){
                 navigate(`/channel/${res.data.channelId}`);
             }
         } catch(err){
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 localStorage.removeItem('Token');
                 user.setLoggedInUser(null);
                 alert("User session expired. Please login and try again.");
             }
-            if (err.response.status === 500){
+            if (err.response?.status === 500){
                 alert("Error occured! Please try after some time.");
             }
-            if (err.response.status === 400){
+            if (err.response?.status === 400){
                 alert(err.response.data.message);
             }
             user.setLoad(false);
@@ -113,6 +115,7 @@ function Header({toggleSideBar}){
         navigate("/");
     }
 
+    // signout user session
     function handleSignOut(){
         user.setLoad(true);
         localStorage.removeItem('Token');
@@ -125,6 +128,7 @@ function Header({toggleSideBar}){
         setSearchText(e.target.value.trim());
     }
 
+    // handle search
     function handleSearch(){
         if(searchText.length > 0){
             navigate(`/?q=${encodeURIComponent(searchText)}`);
@@ -165,13 +169,13 @@ function Header({toggleSideBar}){
                 </nav>
                 <div className="relative flex flex-row h-[100%] w-[32px] sm:w-[150px] items-center relative">
                     <img src={icon} alt={"youtube image"} className='relative h-[32px] w-[32px] cursor-pointer' onClick={navigateHome}/>
-                    <h1 className="text-l font-bold hover:cursor-pointer" onClick={navigateHome}>YouTube<sup className='pl-[4px] text-s font-light'>clone</sup></h1>
+                    <h1 className="text-l font-bold cursor-pointer hover:cursor-pointer" onClick={navigateHome}>YouTube<sup className='pl-[4px] text-s font-light'>clone</sup></h1>
                 </div>
             </div>
-            <div className='hidden sm:block relative flex flex-row justify-center items-center h-[100%] border border-gray-500 rounded-3xl overflow-hidden'>
-                { searchBar && <div className='relative h-[60%] sm:pl-3'><img src={serachicon} alt='searchicon' className='relative h-[100%] overflow-hidden'/></div> }
-                <input type="text" name="search_query" value={searchText} placeholder="Search" className='relative w-[550px] h-[100%] focus:outline-none sm:px-4 sm:pl-5' onChange={ e => {handleSearchText(e)}} onFocus={e => setSearchBar(true)} onBlur={e => setSearchBar(false)}/>
-                <button className='relative h-[100%] px-2.5 border-l px-6 bg-gray-100 cursor-pointer hover:bg-gray-200' onClick={handleSearch}><img src={serachicon} alt='search icon' className='relative h-[60%] overflow-hidden'></img></button>
+            <div className='hidden relative sm:flex flex-row gap-0 justify-start items-start h-[100%] w-[50%] max-w-[700px] border border-gray-500 rounded-3xl overflow-hidden'>
+                <div className='relative h-[100%] w-[15%] flex justify-center items-center'> {searchBar && <img src={serachicon} alt='searchicon' className='relative h-[30px] w-[30px]'/>}</div>
+                <input type="text" name="search_query" value={searchText} placeholder="Search" className='relative w-[70%] h-[100%] focus:outline-none' onChange={ e => {handleSearchText(e)}} onFocus={e => setSearchBar(true)} onBlur={e => setSearchBar(false)}/>
+                <button className='relative h-[100%] w-[15%]  border-l  bg-gray-100 cursor-pointer hover:bg-gray-200 flex justify-center items-center' onClick={handleSearch}><img src={serachicon} alt='search icon' className='relative h-[60%] overflow-hidden'></img></button>
             </div>
             <div className="relative flex flex-row gap-3 h-[100%] items-center px-2">
                 <div className='block sm:hidden flex flex-row justify-center items-center h-[40px] w-[40px] border border-gray-300 bg-gray-100 rounded-full overflow-hidden'>
