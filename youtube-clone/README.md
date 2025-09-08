@@ -20,19 +20,19 @@ Front-End (React)
         ■ Upload date
         
     2. User Authentication:
-    ○ Allow users to register and log in with:
+    ○ Allows users to register and log in with:
         ■ Username
         ■ Email
         ■ Password
     ○ JWT for authentication.
         Before Sign In , header has sign in button.
         When the user clicks on sign in , then it takes to a new URL where user can login and register.
-        After signing in , his/her name is be present at the top of the home page in the form of icon.
+        After signing in , his/her name is  present at the top of the home page in the form of icon.
 
     3. Search and Filter Functionality:
     ○ Implemented a search bar on the homepage.
         This search bar is present in the header and filters videos based on title.
-    ○ Filter buttons are  implemented and filters work based on category.
+    ○ Filter buttons are implemented and filters work based on category.
 
     4. Video Player Page:
     ○ Displays the selected video with:
@@ -57,7 +57,7 @@ Back-End (Node.js, Express.js)
     ○ User Authentication:
         ■ Sign up, login, and token-based authentication using JWT .
     ○ Channel Management:
-        ■ API to create new channel, fetch any information from that channel and delete the channel.
+        ■ API to create new channel, modify, fetch any information from that channel and delete the channel.
     ○ Video Management:
         ■ API to add, fetch, update, and delete videos.
         Comments:
@@ -66,7 +66,7 @@ Back-End (Node.js, Express.js)
     2. Database (MongoDB Atlas - cloudDB, Cloudinary - cloudDB):
     ○ Store users, videos, channels and comments in MongoDB collections.
     ○ Store file metadata (e.g., video URL, thumbnail URL) in the database.
-    ○ Store uploaded video and image files in cloudinary cloud db using multer.
+    ○ Store uploaded video and image files in cloudinary cloud db using multer and cloudinary api.
 
 ------------------------------------------------------------------------------------------------------------------------------
 
@@ -127,7 +127,7 @@ This source code is bifurcated and configured into two different git folders and
         -Git repository link: https://github.com/anshu-intern/BE-youtube-clone.git
         -Deployed on Render
 
-Access this deployed application on the following link: 
+Access this deployed application on the following link: https://fe-youtube-clone.vercel.app/
 
 Try it out and do share your valuable feedback!
 
