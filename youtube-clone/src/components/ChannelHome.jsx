@@ -569,14 +569,14 @@ function ChannelHome(){
                                 vidMenuRef.current[vid._id] = React.createRef();
                             }
                             return( 
-                            <div key={vid._id} className='relative flex flex-col md:justify-start md:items-start gap-0 p-1 h-[340px] w-[100%] max-w-[400px] md:w-[40%] md:max-w-[400px] '>
+                            <div key={vid._id} className='relative flex flex-col md:justify-start md:items-start gap-0 p-1 h-[370px] w-[100%] max-w-[400px] md:w-[40%] md:max-w-[400px] py-2 '>
                                 <Link to={`/watch/${vid._id}`} className='w-[100%] cursor-pointer'>
                                 <img src={vid.thumbnailUrl} alt="video" className='relative h-[200px] w-[100%] rounded-xl object-cover pb-1'/>
                                 </Link>
                                 <div className='flex flex-row justify-between items-start w-[100%]'>
                                     <div className='flex flex-col'>
                                  <Link to={`/watch/${vid._id}`} className='w-[100%] cursor-pointer'>
-                                <span className='w-[100%] text-[16px] font-bold text-black py-1 px-2'>{vid.title}</span>
+                                <span className='w-[100%] text-[16px] font-bold text-black py-1 px-2 line-clamp-2'>{vid.title}</span>
                                 </Link>
                                 <span className='w-[100%] text-[14px] px-2 line-clamp-2'>{vid.description}</span>
                                 <div className='w-[100%] flex flex-row justify-start items-start gap-1'>

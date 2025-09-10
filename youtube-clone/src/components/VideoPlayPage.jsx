@@ -190,7 +190,7 @@ function VideoPlayPage(){
                         <div className='flex flex-col justify-start items-start lg:flex-row lg:justify-start lg:items-start gap-1 w-[100%] cursor-pointer pb-5 px-4 lg:px-0'>
                             <img src={`${other.thumbnailUrl}`} alt='video image' className='lg:h-[100px] w-[100%] h-[150px] lg:w-[40%] max-w-[300px] rounded-xl border'/>
                             <div className='flex flex-col justify-start items-start w-[60%]'>
-                                <span className='text-[14px] font-bold w-[100%]'>{other.title}</span>
+                                <span className='text-[14px] font-bold w-[100%] line-clamp-2'>{other.title}</span>
                                 <span className='text-[12px]  w-[100%]'>{other.uploader?.username}</span>
                                 <span className='w-[100%] text-[12px] text-gray-500'>{ formatViewsIntl(other.views) } * {uploadDate(other.uploadDate)}</span>
                             </div>
